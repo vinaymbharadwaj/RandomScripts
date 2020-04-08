@@ -29,6 +29,16 @@ class ChapterTitle(object):
         if not chapterTitle:
             chapterTitle = "invalid"
         return chapterTitle
+    def parse_boxnovel(self):
+        chapterTitle = self.soup.title.string
+        if not chapterTitle:
+            chapterTitle = "invalid"
+        return chapterTitle
+    def parse_wuxiaworldco(self):
+        chapterTitle = self.soup.title.string
+        if not chapterTitle:
+            chapterTitle = "invalid"
+        return chapterTitle
 
 class ChapterContent(object):
     def parse(self,sitename,soup_obj,chapterTitle):
@@ -45,14 +55,28 @@ class ChapterContent(object):
         chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
         return chapter_content
     def parse_royalroad(self):
-        div = soup.select_one('div[class="chapter-inner chapter-content"]')
+        div = self.soup.select_one('div[class="chapter-inner chapter-content"]')
         for a in div.select("a"):
             a.decompose()
         add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
         chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
         return chapter_content
     def parse_scribblehub(self):
-        div = soup.select_one('div[class="chp_raw"]')
+        div = self.soup.select_one('div[class="chp_raw"]')
+        for a in div.select("a"):
+            a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
+        chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
+        return chapter_content
+    def parse_boxnovel(self):
+        div = self.soup.select_one('div[class="entry-content"]')
+        for a in div.select("a"):
+            a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
+        chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
+        return chapter_content
+    def parse_wuxiaworldco(self):
+        div = self.soup.select_one('div[id="content"]')
         for a in div.select("a"):
             a.decompose()
         add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
@@ -83,13 +107,29 @@ class NextChapterLink(object):
                     break
         return page_url
     def parse_scribblehub(self):
-        page_url = False
+        page_url = "invalid"
         anchor_all = self.soup.findAll("a", {"class": "btn-wi btn-next"})
         for anchor in anchor_all:
             if "Next" in str(anchor.text):
                 if anchor.get('href'):
                     page_url = str(anchor.get('href'))
                     break
+        return page_url
+    def parse_boxnovel(self):
+        page_url = "invalid"
+        anchor_all = self.soup.findAll("a", {"class": "btn next_page"})
+        for anchor in anchor_all:
+            if "Next" in str(anchor.text):
+                if anchor.get('href'):
+                    page_url = str(anchor.get('href'))
+                    break
+        return page_url
+    def parse_wuxiaworldco(self):
+        page_url = "invalid"
+        anchor = self.soup.select_one('a[id="pager_next"]')
+        if anchor.get('href'):
+            if str(anchor.get('href')) != "./":
+                page_url = self.website_url + "/" + str(anchor.get('href'))
         return page_url
 
 class EbookCreator(object):
@@ -124,7 +164,7 @@ class EbookCreator(object):
 
             page_content = requests.get(page_url).content
             
-            soup = BeautifulSoup(page_content)
+            soup = BeautifulSoup(page_content, "lxml")
                         
             chapterTitle = ChapterTitle().parse(website_name,soup)
             if(chapterTitle=="invalid"):

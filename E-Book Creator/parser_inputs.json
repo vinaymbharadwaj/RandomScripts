@@ -1,12 +1,13 @@
 {
-    "novel_name": "RUNAWAY GUIDE",
+    "novel_name": "Adopted Soldier",
     
-    "website_name": "readnovelfull",
-    "_comment": "readnovelfull | royalroad | scribblehub",
+    "website_name": "wuxiaworldco",
+    "_comment_wn": "readnovelfull | royalroad | scribblehub | boxnovel | wuxiaworldco ",
     
-    "website_root": "https://readnovelfull.com",
+    "website_root": "https://www.wuxiaworld.co/Adopted-Soldier",
+    "_comment_wr": "No slash at the end. For wuxiaworldco - root should contain novel name.",
     
-    "start_chapter_url": "/runaway-guide/chapter-1.html",
+    "start_chapter_url": "/1321980.html",
     
     "start_chapter_number": 1
 }
