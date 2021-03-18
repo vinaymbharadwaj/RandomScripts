@@ -39,6 +39,21 @@ class ChapterTitle(object):
         if not chapterTitle:
             chapterTitle = "invalid"
         return chapterTitle
+    def parse_readwebnovels(self):
+        chapterTitle = self.soup.title.string
+        if not chapterTitle:
+            chapterTitle = "invalid"
+        return chapterTitle
+    def parse_instadoses(self):
+        chapterTitle = self.soup.select_one('h1[id="chapter-heading"]')
+        if not chapterTitle:
+            chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
+        return chapterTitle
+    def parse_novelfun(self):
+        chapterTitle = self.soup.select_one('h1[class="css-1ch487y"]')
+        if not chapterTitle:
+            chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
+        return chapterTitle
 
 class ChapterContent(object):
     def parse(self,sitename,soup_obj,chapterTitle):
@@ -77,6 +92,27 @@ class ChapterContent(object):
         return chapter_content
     def parse_wuxiaworldco(self):
         div = self.soup.select_one('div[id="content"]')
+        for a in div.select("a"):
+            a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
+        chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
+        return chapter_content
+    def parse_readwebnovels(self):
+        div = self.soup.select_one('div[class="reading-content"]')
+        for a in div.select("a"):
+            a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
+        chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
+        return chapter_content
+    def parse_instadoses(self):
+        div = self.soup.select_one('div[class="reading-content"]')
+        for a in div.select("a"):
+            a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
+        chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
+        return chapter_content
+    def parse_novelfun(self):
+        div = self.soup.select_one('div[class="fontSize-2 css-p8fe3q-Content e1ktwp231"]')
         for a in div.select("a"):
             a.decompose()
         add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
@@ -131,6 +167,34 @@ class NextChapterLink(object):
             if str(anchor.get('href')) != "./":
                 page_url = self.website_url + "/" + str(anchor.get('href'))
         return page_url
+    def parse_readwebnovels(self):
+        page_url = "invalid"
+        anchor_all = self.soup.findAll("a", {"class": "btn next_page"})
+        for anchor in anchor_all:
+            if "Next" in str(anchor.text):
+                if anchor.get('href'):
+                    page_url = str(anchor.get('href'))
+                    break
+        return page_url
+    def parse_instadoses(self):
+        page_url = "invalid"
+        anchor_all = self.soup.findAll("a", {"class": "btn next_page"})
+        for anchor in anchor_all:
+            if "Next" in str(anchor.text):
+                if anchor.get('href'):
+                    page_url = str(anchor.get('href'))
+                    break
+        return page_url
+    def parse_novelfun(self):
+        page_url = "invalid"
+        anchor_all = self.soup.findAll("a", {"class": "css-122d1rp"})
+        for anchor in anchor_all:
+            if "Next" in str(anchor.text):
+                if anchor.get('href'):
+                    page_url = self.website_url + str(anchor.get('href'))
+                    break
+        return page_url
+    
 
 class EbookCreator(object):
     def __init__(self, input_file="parser_inputs.json"):
@@ -163,6 +227,7 @@ class EbookCreator(object):
         while status:
 
             page_content = requests.get(page_url).content
+            #print(page_content)
             
             soup = BeautifulSoup(page_content, "lxml")
                         
@@ -185,7 +250,7 @@ class EbookCreator(object):
             else:
                 book.spine.append(c1)
 
-            print("Parsed chapter " + str(i))
+            print("Parsed " + str(i) + " - " + chapterTitle)
             page_url = NextChapterLink().parse(website_name,soup,website_url) #self.get_next_chapter_link()
             if(page_url=="invalid"):
                 status = False
