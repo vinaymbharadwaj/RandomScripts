@@ -54,6 +54,9 @@ class ChapterTitle(object):
         if not chapterTitle:
             chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
         return chapterTitle
+    def parse_ranobes(self):
+        chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
+        return chapterTitle
 
 class ChapterContent(object):
     def parse(self,sitename,soup_obj,chapterTitle):
@@ -113,6 +116,13 @@ class ChapterContent(object):
         return chapter_content
     def parse_novelfun(self):
         div = self.soup.select_one('div[class="fontSize-2 css-p8fe3q-Content e1ktwp231"]')
+        for a in div.select("a"):
+            a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
+        chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
+        return chapter_content
+    def parse_ranobes(self):
+        div = self.soup.select_one('div[id="arrticle"]')
         for a in div.select("a"):
             a.decompose()
         add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
@@ -194,6 +204,13 @@ class NextChapterLink(object):
                     page_url = self.website_url + str(anchor.get('href'))
                     break
         return page_url
+    def parse_ranobes(self):
+        page_url = "invalid"
+        anchor = self.soup.select_one('a[id="next"]')
+        if anchor and anchor.get('href'):
+            if str(anchor.get('href')) != "./":
+                page_url = str(anchor.get('href'))
+        return page_url
     
 
 class EbookCreator(object):
@@ -212,6 +229,15 @@ class EbookCreator(object):
         # The title you want to give to the book
         title = str(self.input_json["novel_name"])
 
+        # Set cover image if available - JPEG only
+        add_image = False
+        if(not self.input_json["novel_cover_image"] == ""):
+            f = open('cover.jpg','wb')
+            f.write(requests.get(self.input_json["novel_cover_image"]).content)
+            f.close()
+            book.set_cover("image.jpg", open('cover.jpg', 'rb').read())
+            add_image = True
+
         # Get website details
         website_name = str(self.input_json["website_name"])
         website_url = str(self.input_json["website_root"])
@@ -221,6 +247,14 @@ class EbookCreator(object):
         tableOfContents = ()
         book.set_title(title)
         book.set_language('en')
+
+        # Add cover image to the beginning of the book
+        if(add_image):
+            print("Adding cover image to the book.")
+            img = epub.EpubImage()
+            img.file_name = 'cover.jpg'
+            img.content = open('cover.jpg', 'rb').read()
+            book.add_item(img)
 
         status = True
         beginning = i = self.input_json["start_chapter_number"]

@@ -1,13 +1,16 @@
 {
-    "novel_name": "I am the King Of Technology",
+    "novel_name": "Guild Wars",
+
+    "novel_cover_image": "https://ranobes.net/uploads/posts/2021-03/1615283428_guild-wars.jpg",
+    "_comment_nci": "JPEG only.",
     
-    "website_name": "novelfun",
-    "_comment_wn": "readnovelfull | royalroad | scribblehub | boxnovel | wuxiaworldco | readwebnovels | instadoses | novelfun",
+    "website_name": "ranobes",
+    "_comment_wn": "readnovelfull | royalroad | scribblehub | boxnovel | wuxiaworldco | readwebnovels | instadoses | novelfun | ranobes",
     
-    "website_root": "https://novelfun.net",
+    "website_root": "https://ranobes.net/up",
     "_comment_wr": "No slash at the end. For wuxiaworldco - root should contain novel name - https://www.wuxiaworld.co/Sevens.",
     
-    "start_chapter_url": "/novel/im-the-king-of-technology/chapter-1/",
+    "start_chapter_url": "/guild-wars/719608-0.html",
     
     "start_chapter_number": 1
 }
