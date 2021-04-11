@@ -7,6 +7,7 @@ from ebooklib import epub
 import requests
 import time
 import json
+from PIL import Image, ImageDraw, ImageFont
 
 class ChapterTitle(object):
     def parse(self,sitename,soup_obj):
@@ -235,8 +236,27 @@ class EbookCreator(object):
             f = open('cover.jpg','wb')
             f.write(requests.get(self.input_json["novel_cover_image"]).content)
             f.close()
-            book.set_cover("image.jpg", open('cover.jpg', 'rb').read())
-            add_image = True
+        else:
+            # Cover image not specified, so I will create one
+            image = Image.new('RGB', (600, 800), color = (0, 0, 0))
+            draw = ImageDraw.Draw(image)
+            a = self.input_json["novel_name"].split()
+            message = ''
+            for i in range(0, len(a), 4):
+                message += ' '.join(a[i:i+4]) + '\n'
+            font = ImageFont.truetype('trebuc.ttf', size=20)
+            bounding_box = [60, 80, 540, 720]
+            x1, y1, x2, y2 = bounding_box  
+            w, h = draw.textsize(message, font=font)
+            x = (x2 - x1 - w)/2 + x1
+            y = (y2 - y1 - h)/2 + y1
+            draw.text((x, y), message, align='center', font=font)
+            draw.rectangle([x1, y1, x2, y2])
+            image.save('cover.jpg')
+        
+        # Set cover image
+        book.set_cover("cover.jpg", open('cover.jpg', 'rb').read())
+        add_image = True
 
         # Get website details
         website_name = str(self.input_json["website_name"])
@@ -249,19 +269,21 @@ class EbookCreator(object):
         book.set_language('en')
 
         # Add cover image to the beginning of the book
-        if(add_image):
-            print("Adding cover image to the book.")
-            img = epub.EpubImage()
-            img.file_name = 'cover.jpg'
-            img.content = open('cover.jpg', 'rb').read()
-            book.add_item(img)
+        image_html = '<html><body><div class="fullscreenimage"><img src="cover.jpg" alt="cover_image" /></div></body></html>'
+        image_css = "div.fullscreenimage , div.fullscreenimage img {page-break-before: always; height: 100%;}"
+        cover_chapter = epub.EpubHtml(title='Cover Imge', file_name='cover_chapter.xhtml', lang='hr')
+        cover_chapter.set_content(image_html)
+        book.add_item(cover_chapter)
+
+        # Creating table of content and book spine
+        book.toc.append(cover_chapter) 
+        book.spine = ['nav', cover_chapter]
 
         status = True
-        beginning = i = self.input_json["start_chapter_number"]
+        i = self.input_json["start_chapter_number"] if self.input_json["start_chapter_number"] else 1
         while status:
 
             page_content = requests.get(page_url).content
-            #print(page_content)
             
             soup = BeautifulSoup(page_content, "lxml")
                         
@@ -278,11 +300,8 @@ class EbookCreator(object):
             # Add to table of contents
             book.toc.append(c1)    
 
-            # Add to book ordering
-            if i == beginning:
-                book.spine = ['nav', c1]
-            else:
-                book.spine.append(c1)
+            # Add to book ordering            
+            book.spine.append(c1)
 
             print("Parsed " + str(i) + " - " + chapterTitle)
             page_url = NextChapterLink().parse(website_name,soup,website_url) #self.get_next_chapter_link()
