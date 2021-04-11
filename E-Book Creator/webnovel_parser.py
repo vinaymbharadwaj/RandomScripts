@@ -1,11 +1,9 @@
 #!/usr/bin/python
 # coding: latin-1
 import cfscrape
-import re
 from bs4 import BeautifulSoup
 from ebooklib import epub
 import requests
-import time
 import json
 from PIL import Image, ImageDraw, ImageFont
 
