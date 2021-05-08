@@ -2,7 +2,7 @@ from PIL import ImageFont, ImageDraw, Image
 image = Image.new('RGB', (600, 800), color = (0, 0, 0))
 draw = ImageDraw.Draw(image)
 
-s = 'Because My Toilet Turned Into a Dungeon, Taking Care of My Business Has Become too Difficult.'
+s = "After Coincidentally Saving the New Transfer Student's Little Sister, We Gradually Grew Closer"
 a = s.split()
 message = ''
 for i in range(0, len(a), 4):
