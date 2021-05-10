@@ -7,7 +7,6 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-
 def get_slot_details(pincode, date):
     url = 'https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin'
     params = dict(
