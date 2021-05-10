@@ -27,7 +27,7 @@ def get_slot_details(pincode, date):
 def window_alert(session_data):
     app = QApplication(sys.argv)
     w = QWidget()
-    w.setGeometry(100,100,200,50)
+    w.setGeometry(100,100,500,500)
     w.setWindowTitle("Cowin Alert")
     b = QLabel(w)
     if(session_data):
@@ -61,11 +61,11 @@ def main():
                             "Address": center["address"],
                             "Availability": session["available_capacity"],
                             "VaccineName": session["vaccine"],
-                            "Time": datetime.now().strftime("%H-%M-%S")
+                            "Time": datetime.now().strftime("%H:%M:%S")
                         }
                         print(json.dumps(session_data, indent=2))
                         window_alert(session_data)
-        time.sleep(5*60)
+        time.sleep(input_json["check_interval_minutes"]*60)
 
 if __name__ == "__main__":
     main()
