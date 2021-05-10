@@ -1,6 +1,5 @@
 {
-    "pincode": ["560003"],
+    "pincode": "560003",
     "age_limit": 18,
-    "future_check_days": 3,
     "check_interval_minutes": 15
 }

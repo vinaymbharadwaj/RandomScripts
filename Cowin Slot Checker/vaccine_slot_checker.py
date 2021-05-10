@@ -51,7 +51,7 @@ def main():
     while(datetime.now() < new_time):
         print("Check number "+str(i))
         i+=1
-        vaccine_center_data = get_slot_details(pincode="560003", date=today)
+        vaccine_center_data = get_slot_details(pincode=input_json["pincode"], date=today)
         if(vaccine_center_data):
             for center in vaccine_center_data["centers"]:
                 for session in center["sessions"]:
