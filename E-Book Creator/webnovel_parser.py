@@ -6,6 +6,8 @@ from ebooklib import epub
 import requests
 import json
 from PIL import Image, ImageDraw, ImageFont
+import cfscrape
+import cloudscraper
 
 class ChapterTitle(object):
     def parse(self,sitename,soup_obj):
@@ -54,6 +56,9 @@ class ChapterTitle(object):
             chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
         return chapterTitle
     def parse_ranobes(self):
+        chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
+        return chapterTitle
+    def parse_tracan(self):
         chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
         return chapterTitle
 
@@ -121,11 +126,20 @@ class ChapterContent(object):
         chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
         return chapter_content
     def parse_ranobes(self):
+        #print(str(self.soup))
         div = self.soup.select_one('div[id="arrticle"]')
+        #print("Div: "+str(div))
         for a in div.select("a"):
             a.decompose()
         add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
         chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
+        return chapter_content
+    def parse_tracan(self):
+        div = self.soup.select_one('div[class="entry-content"]')
+        for a in div.select("a"):
+            a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
+        chapter_content = add_title.encode('utf-8')+str(div).split("Partager")[0].encode('utf-8')
         return chapter_content
 
 class NextChapterLink(object):
@@ -210,6 +224,17 @@ class NextChapterLink(object):
             if str(anchor.get('href')) != "./":
                 page_url = str(anchor.get('href'))
         return page_url
+    def parse_tracan(self):
+        page_url = "invalid"
+        div = self.soup.select_one('div[class="entry-content"]')
+        print(str(self.soup))
+        anchor_all = div.select('a')
+        for anchor in anchor_all:
+            if "Next" in str(anchor.text):
+                if anchor.get('href'):
+                    page_url = str(anchor.get('href'))
+                    break
+        return page_url
     
 
 class EbookCreator(object):
@@ -220,7 +245,8 @@ class EbookCreator(object):
     def start_parsing(self):
 
         # Get the text at the set URL
-        scraper = cfscrape.create_scraper()
+        #scraper = cfscrape.create_scraper()
+        scraper = cloudscraper.create_scraper()
 
         # Create the epub file
         book = epub.EpubBook()
@@ -281,7 +307,9 @@ class EbookCreator(object):
         i = self.input_json["start_chapter_number"] if self.input_json["start_chapter_number"] else 1
         while status:
 
-            page_content = requests.get(page_url).content
+            #page_content = requests.get(page_url).content
+            page_content = scraper.get(page_url).content
+            print(page_content)
             
             soup = BeautifulSoup(page_content, "lxml")
                         

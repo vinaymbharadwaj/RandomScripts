@@ -1,16 +1,18 @@
 {
-    "novel_name": "Super Detective in the Fictional World",
+    "novel_name": "Cultivation Chat Group",
 
-    "novel_cover_image": "https://ranobes.net/uploads/posts/2020-12/1609266382_super-detective-in-the-fictional-world.jpg",
+    "novel_cover_image": "https://ranobes.net/uploads/posts/2020-10/1603350957_cultivation-chat-group.jpg",
     "_comment_nci": "JPEG only.",
     
     "website_name": "ranobes",
-    "_comment_wn": "readnovelfull | royalroad | scribblehub | boxnovel | wuxiaworldco | readwebnovels | instadoses | novelfun | ranobes",
+    "_comment_wn": "readnovelfull | royalroad | scribblehub | boxnovel | wuxiaworldco | readwebnovels | instadoses | novelfun | ranobes | tracan",
     
     "website_root": "https://ranobes.net/up",
-    "_comment_wr": "No slash at the end. For wuxiaworldco - root should contain novel name - https://www.wuxiaworld.co/Sevens.",
-    
-    "start_chapter_url": "/super-detective-in-the-fictional-world/494910-1.html",
+    "_comment_wr1": "No slash at the end.",
+    "_comment_wr2": "For wuxiaworldco - root should contain novel name - https://www.wuxiaworld.co/Sevens.",
+    "_comment_wr3": "For TraCan - root should contain date - https://tracan294231873.com/2020/01/19.",
+
+    "start_chapter_url": "/ccg/252227-chapter-1.html",
     
     "start_chapter_number": 1
 }
