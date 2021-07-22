@@ -227,7 +227,6 @@ class NextChapterLink(object):
     def parse_tracan(self):
         page_url = "invalid"
         div = self.soup.select_one('div[class="entry-content"]')
-        print(str(self.soup))
         anchor_all = div.select('a')
         for anchor in anchor_all:
             if "Next" in str(anchor.text):
@@ -309,7 +308,7 @@ class EbookCreator(object):
 
             #page_content = requests.get(page_url).content
             page_content = scraper.get(page_url).content
-            print(page_content)
+            #print(page_content)
             
             soup = BeautifulSoup(page_content, "lxml")
                         
