@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # coding: latin-1
-import cfscrape
 from bs4 import BeautifulSoup
 from ebooklib import epub
 import requests
@@ -8,6 +7,13 @@ import json
 from PIL import Image, ImageDraw, ImageFont
 import cfscrape
 import cloudscraper
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+
 
 class ChapterTitle(object):
     def parse(self,sitename,soup_obj):
@@ -35,11 +41,6 @@ class ChapterTitle(object):
         if not chapterTitle:
             chapterTitle = "invalid"
         return chapterTitle
-    def parse_wuxiaworldco(self):
-        chapterTitle = self.soup.title.string
-        if not chapterTitle:
-            chapterTitle = "invalid"
-        return chapterTitle
     def parse_readwebnovels(self):
         chapterTitle = self.soup.title.string
         if not chapterTitle:
@@ -61,6 +62,14 @@ class ChapterTitle(object):
     def parse_tracan(self):
         chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
         return chapterTitle
+    def parse_shuhaige(self):
+        chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"  
+        return chapterTitle
+    def parse_tomatomtl(self):
+        chapterTitle = self.soup.select_one('h1[class="chapter_title"]')
+        if not chapterTitle:
+            chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
+        return chapterTitle
 
 class ChapterContent(object):
     def parse(self,sitename,soup_obj,chapterTitle):
@@ -73,56 +82,49 @@ class ChapterContent(object):
         div = self.soup.select_one('div[id="chr-content"]')
         for a in div.select("a"):
             a.decompose()
-        add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
         chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
         return chapter_content
     def parse_royalroad(self):
         div = self.soup.select_one('div[class="chapter-inner chapter-content"]')
         for a in div.select("a"):
             a.decompose()
-        add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
         chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
         return chapter_content
     def parse_scribblehub(self):
         div = self.soup.select_one('div[class="chp_raw"]')
         for a in div.select("a"):
             a.decompose()
-        add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
         chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
         return chapter_content
     def parse_boxnovel(self):
         div = self.soup.select_one('div[class="entry-content"]')
         for a in div.select("a"):
             a.decompose()
-        add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
-        chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
-        return chapter_content
-    def parse_wuxiaworldco(self):
-        div = self.soup.select_one('div[id="content"]')
-        for a in div.select("a"):
-            a.decompose()
-        add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
         chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
         return chapter_content
     def parse_readwebnovels(self):
         div = self.soup.select_one('div[class="reading-content"]')
         for a in div.select("a"):
             a.decompose()
-        add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
         chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
         return chapter_content
     def parse_instadoses(self):
         div = self.soup.select_one('div[class="reading-content"]')
         for a in div.select("a"):
             a.decompose()
-        add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
         chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
         return chapter_content
     def parse_novelfun(self):
         div = self.soup.select_one('div[class="fontSize-2 css-p8fe3q-Content e1ktwp231"]')
         for a in div.select("a"):
             a.decompose()
-        add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
         chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
         return chapter_content
     def parse_ranobes(self):
@@ -131,15 +133,29 @@ class ChapterContent(object):
         #print("Div: "+str(div))
         for a in div.select("a"):
             a.decompose()
-        add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
         chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
         return chapter_content
     def parse_tracan(self):
         div = self.soup.select_one('div[class="entry-content"]')
         for a in div.select("a"):
             a.decompose()
-        add_title = "<h1>"+self.chapterTitle+"</h1><br /><br />"
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
         chapter_content = add_title.encode('utf-8')+str(div).split("Partager")[0].encode('utf-8')
+        return chapter_content
+    def parse_shuhaige(self):
+        div = self.soup.select_one('div[id="content"]')
+        for a in div.select("a"):
+            a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
+        chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
+        return chapter_content
+    def parse_tomatomtl(self):
+        article = self.soup.select_one('article[id="chapter_content"]')
+        for a in article.select("a"):
+            a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
+        chapter_content = add_title.encode('utf-8')+article.encode('utf-8')
         return chapter_content
 
 class NextChapterLink(object):
@@ -182,13 +198,6 @@ class NextChapterLink(object):
                 if anchor.get('href'):
                     page_url = str(anchor.get('href'))
                     break
-        return page_url
-    def parse_wuxiaworldco(self):
-        page_url = "invalid"
-        anchor = self.soup.select_one('a[id="pager_next"]')
-        if anchor.get('href'):
-            if str(anchor.get('href')) != "./":
-                page_url = self.website_url + "/" + str(anchor.get('href'))
         return page_url
     def parse_readwebnovels(self):
         page_url = "invalid"
@@ -234,12 +243,25 @@ class NextChapterLink(object):
                     page_url = str(anchor.get('href'))
                     break
         return page_url
-    
+    def parse_shuhaige(self):
+        page_url = "invalid"
+        anchor = self.soup.select_one('a[id="pager_next"]')
+        if anchor and anchor.get('href'):
+            if not "shu_" in str(anchor.get('href')):
+                page_url = self.website_url + str(anchor.get('href'))
+        return page_url
+    def parse_tomatomtl(self):
+        page_url = "invalid"
+        anchor = self.soup.select_one('a[id="next-chap2"]')
+        if anchor and anchor.get('href'):
+            if not "undefined" in str(anchor.get('href')):
+                page_url = self.website_url + str(anchor.get('href'))
+        return page_url
 
 class EbookCreator(object):
     def __init__(self, input_file="parser_inputs.json"):
         super().__init__()
-        self.input_json = json.load(open(input_file,"r"))
+        self.input_json = json.load(open(input_file,"r", encoding='utf-8'))
 
     def start_parsing(self):
 
@@ -252,6 +274,11 @@ class EbookCreator(object):
 
         # The title you want to give to the book
         title = str(self.input_json["novel_name"])
+
+        # Set the author of the book
+        author = "Unknown"
+        if(not self.input_json["author"] == ""):
+            author = str(self.input_json["author"])
 
         # Set cover image if available - JPEG only
         add_image = False
@@ -290,11 +317,12 @@ class EbookCreator(object):
         tableOfContents = ()
         book.set_title(title)
         book.set_language('en')
+        book.add_author(author)
 
         # Add cover image to the beginning of the book
         image_html = '<html><body><div class="fullscreenimage"><img src="cover.jpg" alt="cover_image" /></div></body></html>'
         image_css = "div.fullscreenimage , div.fullscreenimage img {page-break-before: always; height: 100%;}"
-        cover_chapter = epub.EpubHtml(title='Cover Imge', file_name='cover_chapter.xhtml', lang='hr')
+        cover_chapter = epub.EpubHtml(title='Cover Image', file_name='cover_chapter.xhtml', lang='hr')
         cover_chapter.set_content(image_html)
         book.add_item(cover_chapter)
 
@@ -304,12 +332,44 @@ class EbookCreator(object):
 
         status = True
         i = self.input_json["start_chapter_number"] if self.input_json["start_chapter_number"] else 1
-        while status:
 
-            #page_content = requests.get(page_url).content
-            page_content = scraper.get(page_url).content
-            #print(page_content)
+        # Setup Selenium ChromeDriver
+        use_selenium = str(self.input_json["use_selenium"])
+        if(use_selenium == "true"):
+            # Set up Chrome options for headless browsing
+            chrome_options = Options()
+            chrome_options.add_argument('--headless')  # Run without opening browser window
+            chrome_options.add_argument('--disable-gpu')
+            chrome_options.add_argument('--no-sandbox')
+            chrome_options.add_argument("--log-level=1")
+            chrome_options.add_argument('--enable-unsafe-swiftshader')
+            # chrome_options.add_argument('--use-gl')
+            # Initialize the WebDriver (assuming Chrome)
+            driver = webdriver.Chrome(options=chrome_options)
+
+        while status:
             
+            if(use_selenium == "true"):
+                # Navigate to the URL
+                driver.get(page_url)
+                # Wait for the content to load
+                # Wait up to 10 seconds for the chapter content to appear
+                WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located((By.ID, 'chapter_content'))
+                )
+                # Give extra time for all content to render
+                time.sleep(2)
+                # Find the chapter content
+                content_div = driver.find_element(By.ID, 'chapter_content')
+                if not content_div:
+                    return "Could not find chapter content on the page"
+                page_content = driver.page_source #driver.find_elements(By.TAG_NAME, 'html')
+            else:
+                #First timeout is for session and second is for page wait
+                #page_content = requests.get(page_url, timeout=(10, 10)).content 
+                page_content = scraper.get(page_url).content
+            
+            #print(page_content)
             soup = BeautifulSoup(page_content, "lxml")
                         
             chapterTitle = ChapterTitle().parse(website_name,soup)

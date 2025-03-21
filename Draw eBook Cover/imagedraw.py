@@ -2,7 +2,7 @@ from PIL import ImageFont, ImageDraw, Image
 image = Image.new('RGB', (600, 800), color = (0, 0, 0))
 draw = ImageDraw.Draw(image)
 
-s = "After Coincidentally Saving the New Transfer Student's Little Sister, We Gradually Grew Closer"
+s = "Of a Linear Circle"
 a = s.split()
 message = ''
 for i in range(0, len(a), 4):

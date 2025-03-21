@@ -1,18 +1,25 @@
 {
-    "novel_name": "Cultivation Chat Group",
+    "novel_name": "Zongman - I Am The Master Of Depressive Comics",
 
-    "novel_cover_image": "https://ranobes.net/uploads/posts/2020-10/1603350957_cultivation-chat-group.jpg",
+    "novel_cover_image": "https://wsrv.nl/?url=https://p6-novel.byteimg.com/origin/novel-pic/p2oeb85324bff979fbe3ad352d5a37913aa",
     "_comment_nci": "JPEG only.",
-    
-    "website_name": "ranobes",
-    "_comment_wn": "readnovelfull | royalroad | scribblehub | boxnovel | wuxiaworldco | readwebnovels | instadoses | novelfun | ranobes | tracan",
-    
-    "website_root": "https://ranobes.net/up",
-    "_comment_wr1": "No slash at the end.",
-    "_comment_wr2": "For wuxiaworldco - root should contain novel name - https://www.wuxiaworld.co/Sevens.",
-    "_comment_wr3": "For TraCan - root should contain date - https://tracan294231873.com/2020/01/19.",
 
-    "start_chapter_url": "/ccg/252227-chapter-1.html",
+    "author": "一击手",
+    "_comment_au": "If left blank, author will be set to 'unknown'.",
+    
+    "website_name": "tomatomtl",
+    "_comment_wn1": "readnovelfull | royalroad | scribblehub | boxnovel | readwebnovels | instadoses",
+    "_comment_wn2": "novelfun | ranobes | tracan | shuhaige |  tomatomtl",
+
+    "website_root": "https://tomatomtl.com",
+    "_comment_wr1": "No slash at the end.",
+    "_comment_wr2": "For TraCan - root should contain date - https://tracan294231873.com/2020/01/19.",
+
+    "start_chapter_url": "/book/7232644848833006595/7232662197208515127",
+
+    "use_selenium": "true",
+    "_comment_us1": "true/false",
+    "_comment_us2": "Keep 'true' ONLY for 'tomatomtl'",
     
     "start_chapter_number": 1
 }
