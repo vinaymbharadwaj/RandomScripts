@@ -1,0 +1,26 @@
+{
+    "novel_name": "The daily life of salty fish in Love Apartment",
+
+    "novel_cover_image": "https://img.ttshu8.com/90990/182326.jpg",
+    "_comment_nci": "JPEG only.",
+
+    "author": "风随缘起",
+    "_comment_au": "If left blank, author will be set to 'unknown'.",
+    
+    "website_name": "tomatomtl",
+    "_comment_wn1": "readnovelfull | royalroad | scribblehub | boxnovel | readwebnovels | instadoses",
+    "_comment_wn2": "novelfun | ranobes | tracan | shuhaige |  tomatomtl | dannianwen | biquge",
+
+    "website_root": "https://tomatomtl.com",
+    "_comment_wr1": "No slash at the end.",
+    "_comment_wr2": "For TraCan (BROKEN) - root should contain date - https://tracan294231873.com/2020/01/19.",
+    "_comment_wr3": "For dannianwen (BROKEN) - root should contain chapter - https://www.dannianwen.com/book/5370/chapter.",
+
+    "start_chapter_url": "/book/7081556998747065379/7081558991695774222",
+
+    "use_selenium": "true",
+    "_comment_us1": "true/false",
+    "_comment_us2": "Keep 'true' ONLY for 'tomatomtl'",
+    
+    "start_chapter_number": 1
+}

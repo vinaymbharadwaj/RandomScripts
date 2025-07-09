@@ -1,0 +1,26 @@
+{
+    "novel_name": "Mystery - Job Hunting Journey",
+
+    "novel_cover_image": "https://img.shuhaige.net/57086/146414.jpg",
+    "_comment_nci": "JPEG only.",
+
+    "author": "糖心星",
+    "_comment_au": "If left blank, author will be set to 'unknown'.",
+    
+    "website_name": "shuhaige",
+    "_comment_wn1": "readnovelfull | royalroad | scribblehub | boxnovel | readwebnovels | instadoses",
+    "_comment_wn2": "novelfun | ranobes | tracan | shuhaige |  tomatomtl | dannianwen | biquge",
+
+    "website_root": "https://www.shuhaige.net",
+    "_comment_wr1": "No slash at the end.",
+    "_comment_wr2": "For TraCan (BROKEN) - root should contain date - https://tracan294231873.com/2020/01/19.",
+    "_comment_wr3": "For dannianwen (BROKEN) - root should contain chapter - https://www.dannianwen.com/book/5370/chapter.",
+
+    "start_chapter_url": "/57086/81642788.html",
+
+    "use_selenium": "false",
+    "_comment_us1": "true/false",
+    "_comment_us2": "Keep 'true' ONLY for 'tomatomtl'",
+    
+    "start_chapter_number": 1
+}

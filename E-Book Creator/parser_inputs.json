@@ -1,23 +1,24 @@
 {
-    "novel_name": "Zongman - I Am The Master Of Depressive Comics",
+    "novel_name": "Pokemon - Starting with Duraludon, I am Young and Promising (C1-C227)",
 
-    "novel_cover_image": "https://wsrv.nl/?url=https://p6-novel.byteimg.com/origin/novel-pic/p2oeb85324bff979fbe3ad352d5a37913aa",
+    "novel_cover_image": "https://wsrv.nl/?url=https://p6-novel.byteimg.com/origin/novel-pic/p2od2492188de2e90957bef7cf6b3a0fe0d",
     "_comment_nci": "JPEG only.",
 
-    "author": "一击手",
+    "author": "anyanyanny",
     "_comment_au": "If left blank, author will be set to 'unknown'.",
     
-    "website_name": "tomatomtl",
+    "website_name": "xszj",
     "_comment_wn1": "readnovelfull | royalroad | scribblehub | boxnovel | readwebnovels | instadoses",
-    "_comment_wn2": "novelfun | ranobes | tracan | shuhaige |  tomatomtl",
+    "_comment_wn2": "novelfun | ranobes | tracan | shuhaige |  tomatomtl | dannianwen | biquge | xszj",
 
-    "website_root": "https://tomatomtl.com",
+    "website_root": "https://xszj.org",
     "_comment_wr1": "No slash at the end.",
-    "_comment_wr2": "For TraCan - root should contain date - https://tracan294231873.com/2020/01/19.",
+    "_comment_wr2": "For TraCan (BROKEN) - root should contain date - https://tracan294231873.com/2020/01/19.",
+    "_comment_wr3": "For dannianwen (BROKEN) - root should contain chapter - https://www.dannianwen.com/book/5370/chapter.",
 
-    "start_chapter_url": "/book/7232644848833006595/7232662197208515127",
+    "start_chapter_url": "/b/433644/c/13068005",
 
-    "use_selenium": "true",
+    "use_selenium": "false",
     "_comment_us1": "true/false",
     "_comment_us2": "Keep 'true' ONLY for 'tomatomtl'",
     
