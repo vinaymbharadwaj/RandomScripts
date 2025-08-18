@@ -14,6 +14,7 @@ from selenium.webdriver.edge.options import Options as EdgeOptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from deep_translator import GoogleTranslator
 import time
 import os
 
@@ -79,6 +80,16 @@ class ChapterTitle(object):
         return chapterTitle
     def parse_xszj(self):
         chapterTitle = self.soup.select_one('h1[class="bookname"]').text
+        if not chapterTitle:
+            chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
+        return chapterTitle
+    def parse_dxs(self):
+        chapterTitle = self.soup.select_one('h1[class="chaptername"]').text
+        if not chapterTitle:
+            chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
+        return chapterTitle
+    def parse_tongrenquan(self):
+        chapterTitle = self.soup.select_one('h1').text
         if not chapterTitle:
             chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
         return chapterTitle
@@ -178,6 +189,20 @@ class ChapterContent(object):
         return chapter_content
     def parse_xszj(self):
         div = self.soup.select_one('div[id="booktxt"]')
+        for a in div.select("a"):
+            a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
+        chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
+        return chapter_content
+    def parse_dxs(self):
+        div = self.soup.select_one('div[id="txt"]')
+        for a in div.select("a"):
+            a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
+        chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
+        return chapter_content
+    def parse_tongrenquan(self):
+        div = self.soup.select_one('div[class="read_chapterDetail"]')
         for a in div.select("a"):
             a.decompose()
         add_title = "<h1>"+self.chapterTitle+"</h1>"
@@ -301,6 +326,26 @@ class NextChapterLink(object):
             anchor_next = self.soup.select('a[rel="next"]')[0]
         if anchor_next.get('href') and "/b/" in str(anchor_next.get('href')):
             page_url = self.website_url + str(anchor_next.get('href'))
+        return page_url
+    def parse_dxs(self):
+        page_url = "invalid"
+        anchor = self.soup.select_one('a[class="url_next"]')
+        if anchor and anchor.get('href'):
+            if ".html" in str(anchor.get('href')):
+                page_url = str(anchor.get('href'))
+        print("Page URL: "+str(page_url))
+        return page_url
+    def parse_tongrenquan(self):
+        page_url = "invalid"
+        #div = self.soup.select_one('div[class="pageNav"]')
+        anchor_all = self.soup.select('a') #div.select('a')
+        for anchor in anchor_all:
+            to_translate = str(anchor.text)
+            translated_text = GoogleTranslator(source='zh-CN', target='en').translate(to_translate)
+            if "next" in str(translated_text).lower():
+                if anchor.get('href'):
+                    page_url = self.website_url + str(anchor.get('href'))
+                    break
         return page_url
 
 def generate_cover(title, author=None, output_path='cover.jpg'):
