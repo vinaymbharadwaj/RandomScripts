@@ -509,32 +509,37 @@ class EbookCreator(object):
                 #page_content = requests.get(page_url, timeout=(10, 10)).content 
                 page_content = scraper.get(page_url).content
             
-            #print(page_content)
-            soup = BeautifulSoup(page_content, "lxml")
-                        
-            chapterTitle = ChapterTitle().parse(website_name,soup)
-            if(chapterTitle=="invalid"):
-                chapterTitle = "Chapter "+str(i)
-            chapter_content = ChapterContent().parse(website_name,soup,chapterTitle)
 
-            # Creates a chapter
-            c1 = epub.EpubHtml(title=chapterTitle, file_name='chap_'+str(i)+'.xhtml', lang='hr')
-            c1.content = chapter_content
-            book.add_item(c1)
+            try:
+                #print(page_content)
+                soup = BeautifulSoup(page_content, "lxml")
 
-            # Add to table of contents
-            book.toc.append(c1)    
+                chapterTitle = ChapterTitle().parse(website_name,soup)
+                if(chapterTitle=="invalid"):
+                    chapterTitle = "Chapter "+str(i)
+                chapter_content = ChapterContent().parse(website_name,soup,chapterTitle)
 
-            # Add to book ordering            
-            book.spine.append(c1)
+                # Creates a chapter
+                c1 = epub.EpubHtml(title=chapterTitle, file_name='chap_'+str(i)+'.xhtml', lang='hr')
+                c1.content = chapter_content
+                book.add_item(c1)
 
-            print("Parsed " + str(i) + " - " + chapterTitle)
-            page_url = NextChapterLink().parse(website_name,soup,website_url,page_url) #self.get_next_chapter_link()
-            if(page_url=="invalid"):
+                # Add to table of contents
+                book.toc.append(c1)    
+
+                # Add to book ordering            
+                book.spine.append(c1)
+
+                print("Parsed " + str(i) + " - " + chapterTitle)
+                page_url = NextChapterLink().parse(website_name,soup,website_url,page_url) #self.get_next_chapter_link()
+                if(page_url=="invalid"):
+                    status = False
+
+                i = i + 1
+                #time.sleep(3)
+            except Exception as e:
+                print("Error occurred. Ending book here. Exception: ", e)
                 status = False
-
-            i = i + 1
-            #time.sleep(3)
 
         book.add_item(epub.EpubNcx())
         book.add_item(epub.EpubNav())
