@@ -210,10 +210,11 @@ class ChapterContent(object):
         return chapter_content
 
 class NextChapterLink(object):
-    def parse(self,sitename,soup_obj,website_url):
+    def parse(self,sitename,soup_obj,website_url,current_page_url):
         method_name='parse_'+str(sitename)
         self.soup = soup_obj
         self.website_url = website_url
+        self.current_page_url = current_page_url
         method=getattr(self,method_name,lambda :"invalid")
         return method()
     def parse_readnovelfull(self):
@@ -346,6 +347,12 @@ class NextChapterLink(object):
                 if anchor.get('href'):
                     page_url = self.website_url + str(anchor.get('href'))
                     break
+        if page_url=="invalid":
+            chapter_link_root = self.current_page_url.rsplit("/",1)[0]
+            chapter_link_number = int(str(self.current_page_url.rsplit("/",1)[-1]).rsplit(".",1)[0]) + 1
+            page_url = chapter_link_root + "/" + str(chapter_link_number) + ".html"
+        if page_url==self.current_page_url:
+            return"invalid"
         return page_url
 
 def generate_cover(title, author=None, output_path='cover.jpg'):
@@ -522,7 +529,7 @@ class EbookCreator(object):
             book.spine.append(c1)
 
             print("Parsed " + str(i) + " - " + chapterTitle)
-            page_url = NextChapterLink().parse(website_name,soup,website_url) #self.get_next_chapter_link()
+            page_url = NextChapterLink().parse(website_name,soup,website_url,page_url) #self.get_next_chapter_link()
             if(page_url=="invalid"):
                 status = False
 
