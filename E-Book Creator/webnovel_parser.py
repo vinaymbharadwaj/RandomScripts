@@ -93,6 +93,11 @@ class ChapterTitle(object):
         if not chapterTitle:
             chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
         return chapterTitle
+    def parse_novel543(self):
+        chapterTitle = self.soup.title.string
+        if not chapterTitle:
+            chapterTitle = "invalid"
+        return chapterTitle
 
 class ChapterContent(object):
     def parse(self,sitename,soup_obj,chapterTitle):
@@ -203,6 +208,13 @@ class ChapterContent(object):
         return chapter_content
     def parse_tongrenquan(self):
         div = self.soup.select_one('div[class="read_chapterDetail"]')
+        for a in div.select("a"):
+            a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
+        chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
+        return chapter_content
+    def parse_novel543(self):
+        div = self.soup.select_one('div[class="content py-5"]')
         for a in div.select("a"):
             a.decompose()
         add_title = "<h1>"+self.chapterTitle+"</h1>"
@@ -354,6 +366,19 @@ class NextChapterLink(object):
         if page_url==self.current_page_url:
             return"invalid"
         return page_url
+    def parse_novel543(self):
+        page_url = "invalid"
+        div = self.soup.select_one('div[class="warp my-5 foot-nav"]')
+        anchor_all = div.select('a')
+        #anchor_all = self.soup.select('a')
+        for anchor in anchor_all:
+            to_translate = str(anchor.text)
+            translated_text = GoogleTranslator(source='zh-CN', target='en').translate(to_translate)
+            if "next" in str(translated_text).lower():
+                if anchor.get('href'):
+                    page_url = self.website_url + str(anchor.get('href'))
+                    break
+        return page_url
 
 def generate_cover(title, author=None, output_path='cover.jpg'):
     # Image size (standard 6x9 inches at 300 DPI)
@@ -498,7 +523,7 @@ class EbookCreator(object):
                     EC.presence_of_element_located((By.ID, id_name))
                 )
                 # Give extra time for all content to render
-                time.sleep(2)
+                time.sleep(5)
                 # Find the chapter content
                 content_div = driver.find_element(By.ID, id_name)
                 if not content_div:

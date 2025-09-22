@@ -1,0 +1,26 @@
+{
+    "novel_name": "Apartment - When I came to where the petals were floating (C1-C292)",
+
+    "novel_cover_image": "https://img.dxs.tw/5286/5286897/5286897s.jpg",
+    "_comment_nci": "JPEG only.",
+
+    "author": "水水岚岚",
+    "_comment_au": "If left blank, author will be set to 'unknown'.",
+    
+    "website_name": "dxs",
+    "_comment_wn1": "readnovelfull | royalroad | scribblehub | boxnovel | readwebnovels | instadoses | novelfun",
+    "_comment_wn2": "ranobes | tracan | shuhaige |  tomatomtl | dannianwen | biquge | xszj | dxs",
+
+    "website_root": "https://www.dxs.tw",
+    "_comment_wr1": "No slash at the end.",
+    "_comment_wr2": "For TraCan (BROKEN) - root should contain date - https://tracan294231873.com/2020/01/19.",
+    "_comment_wr3": "For dannianwen (BROKEN) - root should contain chapter - https://www.dannianwen.com/book/5370/chapter.",
+
+    "start_chapter_url": "/du/5286897/85311724.html",
+
+    "use_selenium": "false",
+    "_comment_us1": "true/false",
+    "_comment_us2": "Keep 'true' ONLY for 'tomatomtl'",
+    
+    "start_chapter_number": 1
+}

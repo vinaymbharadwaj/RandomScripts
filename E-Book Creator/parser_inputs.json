@@ -1,22 +1,22 @@
 {
-    "novel_name": "Pokemon - Starting with Duraludon, I am Young and Promising (C1-C227)",
+    "novel_name": "Little Joy - Cultivation of a Genius",
 
-    "novel_cover_image": "https://wsrv.nl/?url=https://p6-novel.byteimg.com/origin/novel-pic/p2od2492188de2e90957bef7cf6b3a0fe0d",
+    "novel_cover_image": "https://i2.novel543.com/thumb/120x160/20230202/271220271526.jpg",
     "_comment_nci": "JPEG only.",
 
-    "author": "anyanyanny",
+    "author": "你學習了嗎",
     "_comment_au": "If left blank, author will be set to 'unknown'.",
     
-    "website_name": "xszj",
-    "_comment_wn1": "readnovelfull | royalroad | scribblehub | boxnovel | readwebnovels | instadoses",
-    "_comment_wn2": "novelfun | ranobes | tracan | shuhaige |  tomatomtl | dannianwen | biquge | xszj",
+    "website_name": "novel543",
+    "_comment_wn1": "readnovelfull | royalroad | scribblehub | boxnovel | readwebnovels | instadoses | novelfun | tongrenquan",
+    "_comment_wn2": "ranobes | tracan | shuhaige |  tomatomtl | dannianwen | biquge | xszj | dxs | novel543",
 
-    "website_root": "https://xszj.org",
+    "website_root": "https://www.novel543.com",
     "_comment_wr1": "No slash at the end.",
     "_comment_wr2": "For TraCan (BROKEN) - root should contain date - https://tracan294231873.com/2020/01/19.",
     "_comment_wr3": "For dannianwen (BROKEN) - root should contain chapter - https://www.dannianwen.com/book/5370/chapter.",
 
-    "start_chapter_url": "/b/433644/c/13068005",
+    "start_chapter_url": "/0419302715/8096_1.html",
 
     "use_selenium": "false",
     "_comment_us1": "true/false",
