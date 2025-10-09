@@ -56,7 +56,7 @@ def split_docx_by_headings(input_path, output_dir, heading_style="Heading 1", nu
     print(f"Split completed. {len(split_groups)} files saved to {output_dir}")
 
 # Example usage:
-file_root = "C:\\DATA\\Novels\\Pokémon - Peak Trainer"
+file_root = "C:\\DATA\\Novels\\American Detective - Start with the Rookie"
 input_file = os.path.join(file_root, "input.docx")
 output_directory = os.path.join(file_root, "output_parts")
 split_docx_by_headings(input_file, output_directory, heading_style="Heading 1", num_files=2)
