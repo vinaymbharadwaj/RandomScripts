@@ -98,6 +98,11 @@ class ChapterTitle(object):
         if not chapterTitle:
             chapterTitle = "invalid"
         return chapterTitle
+    def parse_bixiange(self):
+        chapterTitle = self.soup.select_one('h1').text
+        if not chapterTitle:
+            chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
+        return chapterTitle
 
 class ChapterContent(object):
     def parse(self,sitename,soup_obj,chapterTitle):
@@ -215,6 +220,13 @@ class ChapterContent(object):
         return chapter_content
     def parse_novel543(self):
         div = self.soup.select_one('div[class="content py-5"]')
+        for a in div.select("a"):
+            a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
+        chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
+        return chapter_content
+    def parse_bixiange(self):
+        div = self.soup.select_one('div[class="content"]')
         for a in div.select("a"):
             a.decompose()
         add_title = "<h1>"+self.chapterTitle+"</h1>"
@@ -379,6 +391,25 @@ class NextChapterLink(object):
                     page_url = self.website_url + str(anchor.get('href'))
                     break
         return page_url
+    def parse_bixiange(self):
+        page_url = "invalid"
+        div = self.soup.select_one('div[class="mPage"]')
+        anchor_all = div.select('a')
+        for anchor in anchor_all:
+            to_translate = str(anchor.text)
+            translated_text = GoogleTranslator(source='zh-CN', target='en').translate(to_translate)
+            if "next" in str(translated_text).lower():
+                if anchor.get('href'):
+                    page_url = self.website_url + str(anchor.get('href'))
+                    break
+        if page_url=="invalid":
+            chapter_link_root = self.current_page_url.rsplit("/",1)[0]
+            chapter_link_number = int(str(self.current_page_url.rsplit("/",1)[-1]).rsplit(".",1)[0]) + 1
+            page_url = chapter_link_root + "/" + str(chapter_link_number) + ".html"
+        if page_url==self.current_page_url:
+            return"invalid"
+        return page_url
+    
 
 def generate_cover(title, author=None, output_path='cover.jpg'):
     # Image size (standard 6x9 inches at 300 DPI)
@@ -511,21 +542,47 @@ class EbookCreator(object):
             
             if(use_selenium == "true"):
                 if(website_name == "tomatomtl"):
+                    tag_name = "ID"
                     id_name = "chapter_content"
+                    full_wait = False
                 elif(website_name == "biquge"):
+                    tag_name = "ID"
                     id_name = "chaptercontent"
-                # Navigate to the URL
+                    full_wait = False
+                elif(website_name == "tongrenquan"):
+                    tag_name = "CLASS"
+                    id_name = "read_chapterDetail"
+                    full_wait = True
+                elif(website_name == "bixiange"):
+                    tag_name = "CLASS"
+                    id_name = "content"
+                    full_wait = True
+                
+                # Implicitly wait a while for the full page to load
+                if(full_wait):
+                    driver.implicitly_wait(3)  # waits up to 5 seconds for elements to appear
+
                 driver.get(page_url)
+                
                 # time.sleep(300)
                 # Wait for the content to load
                 # Wait up to 10 seconds for the chapter content to appear
-                WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.ID, id_name))
-                )
-                # Give extra time for all content to render
-                time.sleep(5)
-                # Find the chapter content
-                content_div = driver.find_element(By.ID, id_name)
+                if(tag_name=="ID"):
+                    WebDriverWait(driver, 10).until(
+                        EC.presence_of_element_located((By.ID, id_name))
+                    )
+                    # Give extra time for all content to render
+                    time.sleep(5)
+                    # Find the chapter content
+                    content_div = driver.find_element(By.ID, id_name)
+                elif(tag_name=="CLASS"):
+                    WebDriverWait(driver, 10).until(
+                        EC.presence_of_element_located((By.CLASS_NAME, id_name))
+                    )
+                    time.sleep(5)
+                    # Find the chapter content
+                    content_div = driver.find_element(By.CLASS_NAME, id_name)
+                
                 if not content_div:
                     return "Could not find chapter content on the page"
                 page_content = driver.page_source #driver.find_elements(By.TAG_NAME, 'html')

@@ -1,26 +1,26 @@
 {
-    "novel_name": "Wang Yao's Pokémon Journey (C1-C365)",
+    "novel_name": "Conan - I can extract talents (1-416)",
 
-    "novel_cover_image": "https://img.biquge.tw/2800/2800714/2800714s.jpg",
+    "novel_cover_image": "https://img.faloo.com/Novel/498x705/0/322/000322000.jpg",
     "_comment_nci": "JPEG only.",
 
-    "author": "貓貓想混口飯吃而已",
+    "author": "方便面菌",
     "_comment_au": "If left blank, author will be set to 'unknown'.",
     
-    "website_name": "novel543",
+    "website_name": "bixiange",
     "_comment_wn1": "readnovelfull | royalroad | scribblehub | boxnovel | readwebnovels | instadoses | novelfun | tongrenquan",
-    "_comment_wn2": "ranobes | tracan | shuhaige |  tomatomtl | dannianwen | biquge | xszj | dxs | novel543",
+    "_comment_wn2": "ranobes | tracan | shuhaige |  tomatomtl | dannianwen | biquge | xszj | dxs | novel543 | bixiange",
 
-    "website_root": "https://www.novel543.com",
+    "website_root": "https://m.bixiange.me",
     "_comment_wr1": "No slash at the end.",
     "_comment_wr2": "For TraCan (BROKEN) - root should contain date - https://tracan294231873.com/2020/01/19.",
     "_comment_wr3": "For dannianwen (BROKEN) - root should contain chapter - https://www.dannianwen.com/book/5370/chapter.",
 
-    "start_chapter_url": "/0814607243/8096_1.html",
+    "start_chapter_url": "/trxs/17915/index/1.html",
 
-    "use_selenium": "false",
+    "use_selenium": "true",
     "_comment_us1": "true/false",
-    "_comment_us2": "Keep 'true' ONLY for 'tomatomtl'",
+    "_comment_us2": "Keep 'true' ONLY for 'tomatomtl', 'biquge' and 'tongrenquan'",
     
     "start_chapter_number": 1
 }
