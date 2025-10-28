@@ -130,7 +130,7 @@ def process_file(in_path: str, out_path: str, encoding="utf-8"):
 
 # Example usage
 if __name__ == "__main__":
-    file_root = "C:\\DATA\\Novels\\Conan's Sin Value System"
+    file_root = "C:\\DATA\\Novels\\Started as Type-Moon, but Magical Index Magician"
     input_file = os.path.join(file_root, "input.txt")
     output_file = os.path.join(file_root, "output.txt")
     process_file(input_file, output_file)

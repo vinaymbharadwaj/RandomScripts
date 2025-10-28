@@ -55,7 +55,7 @@ def replace_docx_file(input_file, output_file, replacements):
 
 if __name__ == "__main__":
     mapping_file = "C:\\DATA\\Novels\\Pokemon_Glossary_Word_Replacement.txt" # file with Chinese=English lines
-    file_root = "C:\\DATA\\Novels\\Elf - Who made him an investigator!"
+    file_root = "C:\\DATA\\Novels\\Ash Reborn - Restarting the Journey"
     input_file = os.path.join(file_root, "input.docx")  # can be input.txt or input.docx
     output_file = os.path.join(file_root, "output.docx")  # or output.txt
 
