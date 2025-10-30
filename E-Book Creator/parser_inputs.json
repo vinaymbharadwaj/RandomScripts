@@ -1,24 +1,24 @@
 {
-    "novel_name": "Pirates - I become stronger by checking in on the plot islands (C575-C590)",
+    "novel_name": "Writers in American TV series",
 
-    "novel_cover_image": "https://p9-novel-sign.byteimg.com/novel-pic/p2oadf5ac780f0b5bad26584dffdca2765c~tplv-resize:225:300.image?lk3s=191c1ecc&x-expires=1761547506&x-signature=PmqKVmD46u%2BiJgBdPq5H22Qar3c%3D",
+    "novel_cover_image": "https://bookcover.yuewen.com/qdbimg/349573/1021171911/600",
     "_comment_nci": "JPEG only.",
 
-    "author": "香蕉香不香",
+    "author": "江中双鱼",
     "_comment_au": "If left blank, author will be set to 'unknown'.",
     
-    "website_name": "tomatomtl",
+    "website_name": "quanben",
     "_comment_wn1": "readnovelfull | royalroad | scribblehub | boxnovel | readwebnovels | instadoses | novelfun | tongrenquan",
     "_comment_wn2": "ranobes | tracan | shuhaige |  tomatomtl | dannianwen | biquge | xszj | dxs | novel543 | bixiange | quanben",
 
-    "website_root": "https://tomatomtl.com",
+    "website_root": "https://www.quanben.io",
     "_comment_wr1": "No slash at the end.",
     "_comment_wr2": "For TraCan (BROKEN) - root should contain date - https://tracan294231873.com/2020/01/19.",
     "_comment_wr3": "For dannianwen (BROKEN) - root should contain chapter - https://www.dannianwen.com/book/5370/chapter.",
 
-    "start_chapter_url": "/book/7369836388570647577/7511706168150983192",
+    "start_chapter_url": "/n/meijulidezuojia/1.html",
 
-    "use_selenium": "true",
+    "use_selenium": "false",
     "_comment_us1": "true/false",
     "_comment_us2": "Keep 'true' ONLY for 'tomatomtl', 'biquge' and 'tongrenquan'",
     

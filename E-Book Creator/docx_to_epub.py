@@ -264,8 +264,8 @@ def docx_to_epub_parallel(docx_path, epub_path, max_workers=None, temp_dir=None)
 
 
 if __name__ == "__main__":
-    file_root = "C:\\DATA\\Novels\\Fairy Tail - My Magic is Yugi Muto's Card Deck"
-    input_file = os.path.join(file_root, "input.docx")
+    file_root = "C:\\DATA\\Novels\\Writers in American TV series"
+    input_file = os.path.join(file_root, "Writers in American TV series.docx")
     output_file = os.path.join(file_root, "output.epub")
     max_workers = 8
     docx_to_epub_parallel(input_file, output_file, max_workers)
