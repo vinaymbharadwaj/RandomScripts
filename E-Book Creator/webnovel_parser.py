@@ -108,6 +108,11 @@ class ChapterTitle(object):
         if not chapterTitle:
             chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
         return chapterTitle
+    def parse_69shubatw(self):
+        chapterTitle = self.soup.select_one('h1[class="nr_title"]').text
+        if not chapterTitle:
+            chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
+        return chapterTitle
 
 class ChapterContent(object):
     def parse(self,sitename,soup_obj,chapterTitle):
@@ -239,6 +244,13 @@ class ChapterContent(object):
         return chapter_content
     def parse_quanben(self):
         div = self.soup.select_one('div[class="articlebody"]')
+        for a in div.select("a"):
+            a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
+        chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
+        return chapter_content
+    def parse_69shubatw(self):
+        div = self.soup.select_one('div[id="nr1"]')
         for a in div.select("a"):
             a.decompose()
         add_title = "<h1>"+self.chapterTitle+"</h1>"
@@ -431,6 +443,13 @@ class NextChapterLink(object):
             anchor_next = self.soup.select('a[rel="next"]')[0]
         if anchor_next.get('href') and "/n/" in str(anchor_next.get('href')):
             page_url = self.website_url + str(anchor_next.get('href'))
+        return page_url
+    def parse_69shubatw(self):
+        page_url = "invalid"
+        anchor = self.soup.select_one('a[id="pb_next"]')
+        if anchor and anchor.get('href'):
+            if "read" in str(anchor.get('href')):
+                page_url = self.website_url + str(anchor.get('href'))
         return page_url
     
 

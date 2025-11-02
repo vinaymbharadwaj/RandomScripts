@@ -130,7 +130,7 @@ def process_file(in_path: str, out_path: str, encoding="utf-8"):
 
 # Example usage
 if __name__ == "__main__":
-    file_root = "C:\\DATA\\Novels\\Started as Type-Moon, but Magical Index Magician"
-    input_file = os.path.join(file_root, "input.txt")
+    file_root = "C:\\DATA\\Novels\\Lonely Rock and Roll, Liang is My Fiancée"
+    input_file = os.path.join(file_root, "Lonely Rock and Roll, Liang is My Fiancée.txt")
     output_file = os.path.join(file_root, "output.txt")
     process_file(input_file, output_file)

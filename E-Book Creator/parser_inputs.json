@@ -1,22 +1,22 @@
 {
-    "novel_name": "Writers in American TV series",
+    "novel_name": "Naruto - One Punch Man of the Hyuga Family! (C1-C223)",
 
-    "novel_cover_image": "https://bookcover.yuewen.com/qdbimg/349573/1021171911/600",
+    "novel_cover_image": "https://bookcover.yuewen.com/qdbimg/349573/1035651758/600",
     "_comment_nci": "JPEG only.",
 
-    "author": "江中双鱼",
+    "author": "丐幫首席弟子",
     "_comment_au": "If left blank, author will be set to 'unknown'.",
     
-    "website_name": "quanben",
-    "_comment_wn1": "readnovelfull | royalroad | scribblehub | boxnovel | readwebnovels | instadoses | novelfun | tongrenquan",
+    "website_name": "69shubatw",
+    "_comment_wn1": "readnovelfull | royalroad | scribblehub | boxnovel | readwebnovels | instadoses | novelfun | tongrenquan | 69shubatw",
     "_comment_wn2": "ranobes | tracan | shuhaige |  tomatomtl | dannianwen | biquge | xszj | dxs | novel543 | bixiange | quanben",
 
-    "website_root": "https://www.quanben.io",
+    "website_root": "https://69shuba.tw",
     "_comment_wr1": "No slash at the end.",
     "_comment_wr2": "For TraCan (BROKEN) - root should contain date - https://tracan294231873.com/2020/01/19.",
     "_comment_wr3": "For dannianwen (BROKEN) - root should contain chapter - https://www.dannianwen.com/book/5370/chapter.",
 
-    "start_chapter_url": "/n/meijulidezuojia/1.html",
+    "start_chapter_url": "/read/340794/334621",
 
     "use_selenium": "false",
     "_comment_us1": "true/false",
