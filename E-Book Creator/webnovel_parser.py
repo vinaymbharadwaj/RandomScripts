@@ -366,7 +366,7 @@ class NextChapterLink(object):
                 page_url = self.website_url + str(anchor.get('href'))
         return page_url
     def parse_xszj(self):
-        time.sleep(1)
+        #time.sleep(1)
         page_url = "invalid"
         anchor_next = self.soup.select('a[rel="next"]')
         if(not anchor_next):

@@ -264,7 +264,7 @@ def docx_to_epub_parallel(docx_path, epub_path, max_workers=None, temp_dir=None)
 
 
 if __name__ == "__main__":
-    file_root = "C:\\DATA\\Novels\\The Elementary School Detective King"
+    file_root = "C:\\DATA\\Novels\\Genshin Impact - The Archmage of Teyvat"
     input_file = os.path.join(file_root, "input.docx")
     output_file = os.path.join(file_root, "output.epub")
     max_workers = 8
