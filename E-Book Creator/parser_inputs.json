@@ -1,24 +1,24 @@
 {
-    "novel_name": "In Detective Conan - Intercepting Miwako Sato at the Start (C1-C209)",
+    "novel_name": "Crossover Anime - I'm Kasumigaoka Utaha's Brother (1-424)",
 
-    "novel_cover_image": "https://bookcover.yuewen.com/qdbimg/349573/1045619254/600",
+    "novel_cover_image": "https://img.faloo.com/Novel/498x705/0/199/000199506.jpg",
     "_comment_nci": "JPEG only.",
 
-    "author": "蟲兒被鳥吃",
+    "author": "黑丝御姐赛高",
     "_comment_au": "If left blank, author will be set to 'unknown'.",
     
-    "website_name": "69shubatw",
+    "website_name": "tongrenquan",
     "_comment_wn1": "readnovelfull | royalroad | scribblehub | boxnovel | readwebnovels | instadoses | novelfun | tongrenquan | 69shubatw",
     "_comment_wn2": "ranobes | tracan | shuhaige |  tomatomtl | dannianwen | biquge | xszj | dxs | novel543 | bixiange | quanben",
 
-    "website_root": "https://69shuba.tw",
+    "website_root": "https://www.tongrenquan.org",
     "_comment_wr1": "No slash at the end.",
     "_comment_wr2": "For TraCan (BROKEN) - root should contain date - https://tracan294231873.com/2020/01/19.",
     "_comment_wr3": "For dannianwen (BROKEN) - root should contain chapter - https://www.dannianwen.com/book/5370/chapter.",
 
-    "start_chapter_url": "/read/349075/2692780",
+    "start_chapter_url": "/tongren/9687/1.html",
 
-    "use_selenium": "false",
+    "use_selenium": "true",
     "_comment_us1": "true/false",
     "_comment_us2": "Keep 'true' ONLY for 'tomatomtl', 'biquge' and 'tongrenquan'",
     
