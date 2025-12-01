@@ -264,7 +264,7 @@ def docx_to_epub_parallel(docx_path, epub_path, max_workers=None, temp_dir=None)
 
 
 if __name__ == "__main__":
-    file_root = "C:\\DATA\\Novels\\I Repair Cultural Relics for the Country"
+    file_root = "C:\\DATA\\Novels\\Daily News - The Prophet of Hogwarts"
     input_file = os.path.join(file_root, "input.docx")
     output_file = os.path.join(file_root, "output.epub")
     max_workers = 8

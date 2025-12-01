@@ -137,7 +137,7 @@ def merge_split_chapters_preserve_format(input_path: str, output_path: str):
 
 # Example usage
 if __name__ == "__main__":
-    file_root = "C:\\DATA\\Novels\\Tokyo Literary Master, Starting with Saving a Girl"
+    file_root = "C:\\DATA\\Novels\\American horror - Starting from Waterfall Town"
     input_file = os.path.join(file_root, "input.docx")
     output_file = os.path.join(file_root, "output.docx")
     merge_split_chapters_preserve_format(input_file, output_file)

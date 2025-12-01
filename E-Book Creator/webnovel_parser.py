@@ -434,7 +434,6 @@ class NextChapterLink(object):
             return"invalid"
         return page_url
     def parse_quanben(self):
-        time.sleep(1)
         page_url = "invalid"
         anchor_next = self.soup.select('a[rel="next"]')
         if(not anchor_next):

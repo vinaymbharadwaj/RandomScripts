@@ -262,7 +262,7 @@ def process_docx_file(filepath):
 
 
 if __name__ == "__main__":
-    file_root = "C:\\DATA\\Novels\\I Repair Cultural Relics for the Country"
+    file_root = "C:\\DATA\\Novels\\Daily News - The Prophet of Hogwarts"
     input_file = os.path.join(file_root, "input.docx")  # can be input.txt or input.docx
     
     if input_file.lower().endswith('.txt'):
