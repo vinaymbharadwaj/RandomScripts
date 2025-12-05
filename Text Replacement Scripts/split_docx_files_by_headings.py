@@ -106,7 +106,7 @@ def split_docx_by_headings_parallel(input_path, output_dir, heading_style="Headi
 
 # Example usage
 if __name__ == "__main__":
-    file_root = "C:\\DATA\\Novels\\Raven Messenger of Hogwarts"
+    file_root = "C:\\DATA\\Novels\\Elf - Newborn Zhiye, starting from Sinnoh"
     input_file = os.path.join(file_root, "input.docx")
     output_directory = os.path.join(file_root, "output_parts")
 
@@ -115,5 +115,5 @@ if __name__ == "__main__":
         output_directory,
         heading_style="Heading 1",
         num_files=2,
-        max_workers=8
+        max_workers=16
     )

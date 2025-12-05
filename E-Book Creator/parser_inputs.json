@@ -1,24 +1,24 @@
 {
-    "novel_name": "I, Gary, will become a Pokémon Master (1-569)",
+    "novel_name": "Pokémon - Ash the New Generation, Starting from Sinnoh (C1-C746)",
 
-    "novel_cover_image": "https://img.faloo.com/Novel/498x705/1/1363/001363012.jpg",
+    "novel_cover_image": "https://img.shuhaige.net/201614/174494.jpg",
     "_comment_nci": "JPEG only.",
 
-    "author": "东爷",
+    "author": "刘皇叔呀",
     "_comment_au": "If left blank, author will be set to 'unknown'.",
     
-    "website_name": "tongrenquan",
+    "website_name": "shuhaige",
     "_comment_wn1": "readnovelfull | royalroad | scribblehub | boxnovel | readwebnovels | instadoses | novelfun | tongrenquan | 69shubatw",
     "_comment_wn2": "ranobes | tracan | shuhaige |  tomatomtl | dannianwen | biquge | xszj | dxs | novel543 | bixiange | quanben",
 
-    "website_root": "https://tongrenquan.org",
+    "website_root": "https://www.shuhaige.net",
     "_comment_wr1": "No slash at the end.",
     "_comment_wr2": "For TraCan (BROKEN) - root should contain date - https://tracan294231873.com/2020/01/19.",
     "_comment_wr3": "For dannianwen (BROKEN) - root should contain chapter - https://www.dannianwen.com/book/5370/chapter.",
 
-    "start_chapter_url": "/tongren/9747/1.html",
+    "start_chapter_url": "/201614/87357530.html",
 
-    "use_selenium": "true",
+    "use_selenium": "flase",
     "_comment_us1": "true/false",
     "_comment_us2": "Keep 'true' ONLY for 'tomatomtl', 'biquge' and 'tongrenquan'",
     
