@@ -1,143 +1,135 @@
 from docx import Document
-from docx.shared import RGBColor
-from collections import OrderedDict
 from concurrent.futures import ProcessPoolExecutor
+from tqdm import tqdm
 import re
 import os
 
-# Regex to match “第12章 xxx (1/3)” or “第十二章 xxx （2/4）”
-CHAP_RE = re.compile(
-    r'^\s*(第[\d一二三四五六七八九十百千]+章)\s+(.+?)\s*(?:[（(]\s*\d+\s*/\s*\d+\s*[）)])?\s*$'
+# ---------------- REGEX ----------------
+
+# Matches suffix like (1/2), （2/3）
+PART_SUFFIX_RE = re.compile(
+    r'^(?P<title>.+?)\s*[（(]\s*\d+\s*/\s*\d+\s*[）)]\s*$'
 )
 
-def normalize_chapter_title(text: str) -> str | None:
-    """Normalize chapter titles by removing (1/3)-style markers."""
-    m = CHAP_RE.match(text.strip())
-    if not m:
-        return None
-    return f"{m.group(1)} {m.group(2)}"
+# Loose chapter hint (language-agnostic)
+CHAPTER_HINT_RE = re.compile(
+    r'^(第.+?章|chapter\s+\d+|chap\.?\s*\d+|ch\.?\s*\d+)',
+    re.IGNORECASE
+)
 
-def is_heading1(para) -> bool:
-    """Detect chapter headings either by style or regex match."""
-    style_name = (para.style.name or "").strip().lower().replace(" ", "")
-    is_heading = style_name in {"heading1", "标题1", "title1"}
-    return is_heading or (normalize_chapter_title(para.text) is not None)
+# ---------------- HELPERS ----------------
 
-def clone_run(dst_run, src_run):
-    """Copy run-level formatting and text."""
-    dst_run.text = src_run.text
-    f = src_run.font
+def normalize_title(text: str) -> str:
+    text = text.strip()
+    m = PART_SUFFIX_RE.match(text)
+    return m.group("title").strip() if m else text
+
+def looks_like_chapter(text: str) -> bool:
+    return bool(CHAPTER_HINT_RE.match(text.strip()))
+
+def is_heading(para) -> bool:
+    style = (para.style.name or "").lower().replace(" ", "")
+    return style in {"heading1", "title1", "标题1"} or looks_like_chapter(para.text)
+
+def clone_run(dst, src):
+    dst.text = src.text
+    f = src.font
     if f:
-        dst_run.font.bold = f.bold
-        dst_run.font.italic = f.italic
-        dst_run.font.underline = f.underline
-        dst_run.font.size = f.size
-        dst_run.font.name = f.name
+        dst.bold = f.bold
+        dst.italic = f.italic
+        dst.underline = f.underline
+        dst.font.size = f.size
+        dst.font.name = f.name
         if f.color and f.color.rgb:
-            dst_run.font.color.rgb = f.color.rgb
+            dst.font.color.rgb = f.color.rgb
 
-def clone_paragraph(dst_doc, src_para):
-    """Clone a paragraph (style, alignment, runs) preserving formatting."""
-    new_p = dst_doc.add_paragraph()
-    if src_para.style:
-        new_p.style = src_para.style
-    new_p.alignment = src_para.alignment
-    new_p.paragraph_format.left_indent = src_para.paragraph_format.left_indent
-    new_p.paragraph_format.right_indent = src_para.paragraph_format.right_indent
-    new_p.paragraph_format.first_line_indent = src_para.paragraph_format.first_line_indent
-    new_p.paragraph_format.space_before = src_para.paragraph_format.space_before
-    new_p.paragraph_format.space_after = src_para.paragraph_format.space_after
-    new_p.paragraph_format.line_spacing = src_para.paragraph_format.line_spacing
+def clone_paragraph(dst_doc, src):
+    p = dst_doc.add_paragraph()
+    p.style = src.style
+    p.alignment = src.alignment
+    pf, sf = p.paragraph_format, src.paragraph_format
+    pf.left_indent = sf.left_indent
+    pf.right_indent = sf.right_indent
+    pf.first_line_indent = sf.first_line_indent
+    pf.space_before = sf.space_before
+    pf.space_after = sf.space_after
+    pf.line_spacing = sf.line_spacing
 
-    for r in src_para.runs:
-        new_r = new_p.add_run()
-        clone_run(new_r, r)
+    for r in src.runs:
+        nr = p.add_run()
+        clone_run(nr, r)
 
-    if not src_para.runs and src_para.text:
-        new_p.add_run(src_para.text)
-    return new_p
-
-def add_heading_preserving_style(dst_doc, src_para, text):
-    """Add heading styled like the source heading."""
-    if src_para.style and "heading 1" in src_para.style.name.lower():
-        p = dst_doc.add_paragraph()
+def add_heading(dst_doc, src_para, title):
+    if src_para.style and "heading" in src_para.style.name.lower():
+        p = dst_doc.add_paragraph(title)
         p.style = src_para.style
-        p.add_run(text)
     else:
-        dst_doc.add_heading(text, level=1)
+        dst_doc.add_heading(title, level=1)
 
-def _normalize_for_index(args):
-    """Parallel helper: normalize chapter titles."""
-    i, text = args
-    normalized = normalize_chapter_title(text) or text.strip()
-    is_ch = bool(normalize_chapter_title(text))
-    return (i, normalized, is_ch)
+# ---------------- PARALLEL NORMALIZATION ----------------
 
-def merge_split_chapters_preserve_format(input_path: str, output_path: str):
-    """Main function to merge split or duplicate consecutive chapters."""
+def normalize_worker(args):
+    idx, text = args
+    return idx, normalize_title(text), looks_like_chapter(text)
+
+# ---------------- MAIN LOGIC ----------------
+
+def merge_chapters_consecutive_only(input_path, output_path):
     doc = Document(input_path)
+
     para_texts = [(i, p.text) for i, p in enumerate(doc.paragraphs)]
 
-    # Normalize all headings in parallel
+    # Parallel preprocessing
     with ProcessPoolExecutor() as ex:
-        results = list(ex.map(_normalize_for_index, para_texts))
+        results = list(tqdm(
+            ex.map(normalize_worker, para_texts),
+            total=len(para_texts),
+            desc="Analyzing chapter titles"
+        ))
 
-    norm_by_idx = {i: (norm, is_ch) for i, norm, is_ch in results}
+    norm_map = {i: (norm, is_ch) for i, norm, is_ch in results}
 
-    chapters = OrderedDict()
-    current_key = None
-    current_header_para = None
-    prev_key = None
+    new_doc = Document()
+
+    current_title = None
+    current_header = None
+    buffer = []
 
     for i, para in enumerate(doc.paragraphs):
-        norm, is_ch = norm_by_idx[i]
+        norm_title, is_chapter = norm_map[i]
 
-        if is_heading1(para):
-            # Normalize title
-            norm_title = normalize_chapter_title(para.text) or para.text.strip()
+        if is_heading(para):
+            # If same normalized title as current → MERGE
+            if current_title == norm_title:
+                continue
 
-            # NEW LOGIC: Merge consecutive identical chapters
-            if norm_title == prev_key:
-                # Continue same chapter (don’t create a new key)
-                current_key = prev_key
-                # update header if not set before
-                if chapters[current_key]["header_src"] is None:
-                    chapters[current_key]["header_src"] = para
-            else:
-                current_key = norm_title
-                if current_key not in chapters:
-                    chapters[current_key] = {"header_src": para, "blocks": []}
-            prev_key = norm_title
+            # Flush previous chapter
+            if current_title:
+                add_heading(new_doc, current_header, current_title)
+                for p in buffer:
+                    clone_paragraph(new_doc, p)
+                new_doc.add_paragraph()
+
+            # Start new chapter
+            current_title = norm_title
+            current_header = para
+            buffer = []
         else:
-            if current_key:
-                chapters[current_key]["blocks"].append(para)
+            if current_title:
+                buffer.append(para)
 
-    # Rebuild merged document
-    new_doc = Document()
-    try:
-        src_sec = doc.sections[0]
-        dst_sec = new_doc.sections[0]
-        dst_sec.page_height = src_sec.page_height
-        dst_sec.page_width = src_sec.page_width
-        dst_sec.left_margin = src_sec.left_margin
-        dst_sec.right_margin = src_sec.right_margin
-        dst_sec.top_margin = src_sec.top_margin
-        dst_sec.bottom_margin = src_sec.bottom_margin
-    except Exception:
-        pass
-
-    for chap_title, payload in chapters.items():
-        add_heading_preserving_style(new_doc, payload["header_src"], chap_title)
-        for para in payload["blocks"]:
-            clone_paragraph(new_doc, para)
-        new_doc.add_paragraph()  # optional blank line between chapters
+    # Flush last chapter
+    if current_title:
+        add_heading(new_doc, current_header, current_title)
+        for p in buffer:
+            clone_paragraph(new_doc, p)
 
     new_doc.save(output_path)
-    print(f"✅ Merged file saved to: {os.path.abspath(output_path)}")
+    print(f"\n✅ Done: {os.path.abspath(output_path)}")
 
-# Example usage
+# ---------------- USAGE ----------------
 if __name__ == "__main__":
-    file_root = "C:\\DATA\\Novels\\Elf - Newborn Zhiye, starting from Sinnoh"
+    file_root = "C:\\DATA\\Novels\\NBA - Starting with a fusion of Durant and Draymond"
     input_file = os.path.join(file_root, "input.docx")
     output_file = os.path.join(file_root, "output.docx")
-    merge_split_chapters_preserve_format(input_file, output_file)
+    merge_chapters_consecutive_only(input_file, output_file)

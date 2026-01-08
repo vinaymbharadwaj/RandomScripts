@@ -14,6 +14,8 @@ from selenium.webdriver.edge.options import Options as EdgeOptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from deep_translator import GoogleTranslator
 import time
 import os
@@ -567,17 +569,29 @@ class EbookCreator(object):
 
         # Setup Selenium ChromeDriver
         use_selenium = str(self.input_json["use_selenium"])
+        browser_choice = str(self.input_json["browser"])
         if(use_selenium == "true"):
-            # Set up Chrome options for headless browsing
-            # For Edge use: chrome_options = EdgeOptions() and driver = webdriver.Edge(options=chrome_options) at the end...
-            chrome_options = Options()
-            chrome_options.add_argument('--headless')  # Run without opening browser window
-            chrome_options.add_argument('--disable-gpu')
-            chrome_options.add_argument('--no-sandbox')
-            chrome_options.add_argument("--log-level=1")
-            chrome_options.add_argument('--enable-unsafe-swiftshader')
-            # Initialize the WebDriver (assuming Chrome)
-            driver = webdriver.Chrome(options=chrome_options)
+            if(browser_choice == "firefox"):
+                # Path to your EXISTING Firefox profile (already logged in)
+                firefox_profile_path = "C:\\Users\\vinay\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\spdu5de0.default-release"
+                options = FirefoxOptions()
+                # Load existing logged-in Firefox profile
+                options.add_argument("-profile")
+                options.add_argument(firefox_profile_path)
+                # Optional — REMOVE if login breaks
+                # options.add_argument("--headless")
+                driver = webdriver.Firefox(options=options)
+            else:
+                # Set up Chrome options for headless browsing
+                # For Edge use: chrome_options = EdgeOptions() and driver = webdriver.Edge(options=chrome_options) at the end...
+                chrome_options = Options()
+                chrome_options.add_argument('--headless')  # Run without opening browser window
+                chrome_options.add_argument('--disable-gpu')
+                chrome_options.add_argument('--no-sandbox')
+                chrome_options.add_argument("--log-level=1")
+                chrome_options.add_argument('--enable-unsafe-swiftshader')
+                # Initialize the WebDriver (assuming Chrome)
+                driver = webdriver.Chrome(options=chrome_options)
 
         while status:
             

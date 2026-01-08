@@ -215,7 +215,7 @@ def process_epub_parallel(input_path: str, output_path: str, workers: int | None
 
 # --- CLI ---
 def main(argv):
-    file_root = "C:\\DATA\\Novels\\Isn't it very scientific to use the Death Note to kill people"
+    file_root = "C:\\DATA\\Novels\\Detective Conan - Found Ai Haibara and pursued by Akako"
     input_path = os.path.join(file_root, "input.epub")
     workers = 8
 

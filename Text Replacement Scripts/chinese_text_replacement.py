@@ -383,7 +383,7 @@ def process_docx(input_path: str, output_path: str, pattern_str: str, mapping: D
 # -------------------------
 if __name__ == "__main__":
     mapping_file = "C:\\DATA\\Novels\\Pokemon_Glossary_Word_Replacement.txt" # file with Chinese=English lines
-    file_root = "C:\\DATA\\Novels\\Elf - Newborn Zhiye, starting from Sinnoh"
+    file_root = "C:\\DATA\\Novels\\Divine Plan, But I'm a Pokémon trainer"
     input_file = os.path.join(file_root, "input.txt")  # can be input.txt or input.docx
     output_file = os.path.join(file_root, "output.txt")  # or output.txt
     fast_serialize = True

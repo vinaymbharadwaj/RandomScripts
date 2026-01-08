@@ -1,26 +1,28 @@
 {
-    "novel_name": "Pokémon - Ash the New Generation, Starting from Sinnoh (C1-C746)",
+    "novel_name": "Oregairu - This isn't right, Why is it Conan (C458-C531)",
 
-    "novel_cover_image": "https://img.shuhaige.net/201614/174494.jpg",
+    "novel_cover_image": "https://p3-reading-sign.fqnovelpic.com/novel-pic/p2o7903a338502573a76fe8cbd7c256b6d9~tplv-resize:225:0.image?lk3s=5b7047ff&x-expires=1767923661&x-signature=JUKKYx1Q3WFeZNZTsJbX259mAhU%3D",
     "_comment_nci": "JPEG only.",
 
-    "author": "刘皇叔呀",
+    "author": "诚实成识",
     "_comment_au": "If left blank, author will be set to 'unknown'.",
     
-    "website_name": "shuhaige",
+    "website_name": "tomatomtl",
     "_comment_wn1": "readnovelfull | royalroad | scribblehub | boxnovel | readwebnovels | instadoses | novelfun | tongrenquan | 69shubatw",
     "_comment_wn2": "ranobes | tracan | shuhaige |  tomatomtl | dannianwen | biquge | xszj | dxs | novel543 | bixiange | quanben",
 
-    "website_root": "https://www.shuhaige.net",
+    "website_root": "https://tomatomtl.com",
     "_comment_wr1": "No slash at the end.",
     "_comment_wr2": "For TraCan (BROKEN) - root should contain date - https://tracan294231873.com/2020/01/19.",
     "_comment_wr3": "For dannianwen (BROKEN) - root should contain chapter - https://www.dannianwen.com/book/5370/chapter.",
 
-    "start_chapter_url": "/201614/87357530.html",
+    "start_chapter_url": "/book/7491681507849800729/7578133935641608729",
 
-    "use_selenium": "flase",
+    "use_selenium": "true",
     "_comment_us1": "true/false",
     "_comment_us2": "Keep 'true' ONLY for 'tomatomtl', 'biquge' and 'tongrenquan'",
+    "browser": "firefox",
+    "_comment_us3": "'chrome' (default) or 'firefox'. Use firefox for tomatomtl.",
     
     "start_chapter_number": 1
 }
