@@ -379,13 +379,20 @@ def process_docx(input_path: str, output_path: str, pattern_str: str, mapping: D
     return total_replacements
 
 # -------------------------
-# CLI main
+# Main
 # -------------------------
 if __name__ == "__main__":
-    mapping_file = "C:\\DATA\\Novels\\Pokemon_Glossary_Word_Replacement.txt" # file with Chinese=English lines
-    file_root = "C:\\DATA\\Novels\\Divine Plan, But I'm a Pokémon trainer"
-    input_file = os.path.join(file_root, "input.txt")  # can be input.txt or input.docx
-    output_file = os.path.join(file_root, "output.txt")  # or output.txt
+    # File with Chinese=English lines
+    # mapping_file = "C:\\DATA\\Novels\\Pokemon_Glossary_Word_Replacement.txt"
+    # mapping_file = "C:\\DATA\\Novels\\Pokemon_Glossary_Word_Replacement2.txt"
+    mapping_file = "C:\\DATA\\Novels\\Conan_Glossary_Word_Replacement.txt"
+    # mapping_file = "C:\\DATA\\Novels\\HarryPotter_Glossary_Word_Replacement.txt"
+    # mapping_file = "C:\\DATA\\Novels\\OnePiece_Glossary_Word_Replacement.txt"
+    
+    file_root = "C:\\DATA\\Novels\\Conan - Science Cartoonist Kudo Yuji"
+    
+    input_file = os.path.join(file_root, "input.docx")  # can be input.txt or input.docx
+    output_file = os.path.join(file_root, "output.docx")  # or output.txt
     fast_serialize = True
     workers = max(1, cpu_count()-1)
 
