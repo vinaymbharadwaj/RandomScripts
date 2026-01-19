@@ -1,24 +1,24 @@
 {
-    "novel_name": "My youthful school days truly began after my rebirth",
+    "novel_name": "My Daily Life of Writing Novels for Detective Conan and Just Loafing Around Doing Nothing",
 
-    "novel_cover_image": "https://p3-novel-sign.byteimg.com/novel-pic/p2o5f989c5939941646fb6fca43a2de6873~tplv-resize:225:300.image?lk3s=191c1ecc&x-expires=1768211336&x-signature=yu1YlIZIY4Bk3tBBHOE4UUfHez4%3D",
+    "novel_cover_image": "https://chatgpt.com/backend-api/estuary/content?id=file_00000000b210720980478aac75057314&ts=491313&p=fs&cid=1&sig=915ea85a1c341f0a6168ed39e6ef346a03f4e48f1593aabfdb140fc8970f70c1&v=0",
     "_comment_nci": "JPEG only.",
 
-    "author": "真不喜歡洋蔥",
+    "author": "穷尽",
     "_comment_au": "If left blank, author will be set to 'unknown'.",
     
-    "website_name": "novel543",
+    "website_name": "tomatomtl",
     "_comment_wn1": "readnovelfull | royalroad | scribblehub | boxnovel | readwebnovels | instadoses | novelfun | tongrenquan | 69shubatw",
     "_comment_wn2": "ranobes | tracan | shuhaige |  tomatomtl | dannianwen | biquge | xszj | dxs | novel543 | bixiange | quanben",
 
-    "website_root": "https://www.novel543.com",
+    "website_root": "https://tomatomtl.com",
     "_comment_wr1": "No slash at the end.",
     "_comment_wr2": "For TraCan (BROKEN) - root should contain date - https://tracan294231873.com/2020/01/19.",
     "_comment_wr3": "For dannianwen (BROKEN) - root should contain chapter - https://www.dannianwen.com/book/5370/chapter.",
 
-    "start_chapter_url": "/0701623430/8096_1.html",
+    "start_chapter_url": "/book/7448397271160327230/7448479052496634430",
 
-    "use_selenium": "false",
+    "use_selenium": "true",
     "_comment_us1": "true/false",
     "_comment_us2": "Keep 'true' ONLY for 'tomatomtl', 'biquge' and 'tongrenquan'",
     "browser": "firefox",

@@ -1,271 +1,253 @@
 import os
-import shutil
-from concurrent.futures import ProcessPoolExecutor, as_completed
-from docx import Document
-from ebooklib import epub
-from PIL import Image
-from copy import deepcopy
+import sys
 import uuid
+import logging
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
 
+import docx
+from docx.document import Document as _Document
+from docx.oxml.ns import qn
+from docx.text.paragraph import Paragraph
+from docx.text.run import Run
+from docx.table import Table
 
-def process_chunk_serializable(args):
-    """Worker function — executed in parallel for each chapter chunk."""
-    chunk_index, title, blocks, images_base_path = args
+from ebooklib import epub
 
-    def runs_to_html(runs):
-        parts = []
-        for r in runs:
-            text = (r.get("text") or "").replace("<", "&lt;").replace(">", "&gt;")
-            if not text:
-                continue
-            prefix = ""
-            suffix = ""
-            color = r.get("color")
-            if color:
-                prefix += f'<span style="color:{color}">'
-                suffix = "</span>" + suffix
-            if r.get("bold"):
-                prefix += "<strong>"
-                suffix = "</strong>" + suffix
-            if r.get("italic"):
-                prefix += "<em>"
-                suffix = "</em>" + suffix
-            if r.get("underline"):
-                prefix += "<u>"
-                suffix = "</u>" + suffix
-            hyperlink = r.get("hyperlink")
-            inner = f"{prefix}{text}{suffix}"
-            if hyperlink:
-                inner = f'<a href="{hyperlink}">{inner}</a>'
-            parts.append(inner)
-        return "".join(parts)
+# --- Configuration & Helpers ---
 
-    html = ""
-    i = 0
-    while i < len(blocks):
-        blk = blocks[i]
-        if blk["type"] == "paragraph":
-            style = blk.get("style", "")
-            if "Bullet" in style or "Number" in style:
-                list_tag = "ul" if "Bullet" in style else "ol"
-                html += f"<{list_tag}>"
-                while i < len(blocks) and blocks[i]["type"] == "paragraph" and (
-                    "Bullet" in blocks[i].get("style", "")
-                    or "Number" in blocks[i].get("style", "")
-                ):
-                    pblk = blocks[i]
-                    text_html = runs_to_html(pblk.get("runs", []))
-                    if pblk.get("hyperlink"):
-                        text_html += f' <a href="{pblk["hyperlink"]}">{pblk["hyperlink_text"]}</a>'
-                    html += f"<li>{text_html}</li>"
-                    i += 1
-                html += f"</{list_tag}>"
-                continue
-            else:
-                if style.startswith("Heading 2"):
-                    text_html = runs_to_html(blk.get("runs", []))
-                    html += f"<h2>{text_html}</h2>"
-                else:
-                    text_html = runs_to_html(blk.get("runs", []))
-                    if blk.get("hyperlink"):
-                        text_html += f' <a href="{blk["hyperlink"]}">{blk.get("hyperlink_text","")}</a>'
-                    if text_html:
-                        html += f"<p>{text_html}</p>"
-            i += 1
+def get_image_from_run(run, parent_part):
+    """Safely extracts image binary from a docx run."""
+    if not hasattr(run, 'element') or not run.element.xpath('.//a:blip'):
+        return None
 
-        elif blk["type"] == "image":
-            fname = blk["file"]
-            html += f'<div style="text-align:center;"><img src="images/{fname}" alt="Image"/></div>'
-            i += 1
+    try:
+        blip = run.element.xpath('.//a:blip')[0]
+        embed_id = blip.get(qn('r:embed'))
+        if not embed_id:
+            return None
 
-        elif blk["type"] == "table":
-            html += blk.get("html", "")
-            i += 1
-        else:
-            i += 1
+        image_part = parent_part.related_parts[embed_id]
+        image_bytes = image_part.blob
+        content_type = image_part.content_type
+        ext = content_type.split('/')[-1].replace('jpeg', 'jpg')
+        filename = f"img_{uuid.uuid4().hex[:8]}.{ext}"
+        
+        return filename, image_bytes, content_type
+    except Exception as e:
+        logging.warning(f"Could not extract image: {e}")
+        return None
 
-    return (chunk_index, title, html)
+def html_escape(text):
+    if not text: return ""
+    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
+def convert_run_to_html(run, parent_part, images_buffer):
+    """Converts a run (text/image) to HTML string."""
+    text = html_escape(run.text)
+    
+    img_data = get_image_from_run(run, parent_part)
+    if img_data:
+        fname, bytes_data, mime = img_data
+        images_buffer.append((fname, bytes_data, mime))
+        return f'<img src="images/{fname}" alt="image" style="max-width:100%; height:auto;" />'
 
-def docx_to_epub_parallel(docx_path, epub_path, max_workers=None, temp_dir=None):
-    """Convert DOCX -> EPUB using parallel chapter processing with progress reporting."""
-    doc = Document(docx_path)
-    props = doc.core_properties
-    title = props.title or os.path.splitext(os.path.basename(docx_path))[0]
-    author = props.author or "Unknown Author"
+    if not text: return ""
 
-    if not temp_dir:
-        parent = os.path.dirname(os.path.abspath(epub_path)) or "."
-        temp_dir = os.path.join(parent, f"temp_epub_images_{uuid.uuid4().hex[:8]}")
-    os.makedirs(temp_dir, exist_ok=True)
+    if run.bold: text = f"<b>{text}</b>"
+    if run.italic: text = f"<i>{text}</i>"
+    if run.underline: text = f"<u>{text}</u>"
+    return text
 
-    def save_image_bytes(img_bytes, ext="png"):
-        fname = f"image_{uuid.uuid4().hex[:8]}.{ext}"
-        fpath = os.path.join(temp_dir, fname)
-        with open(fpath, "wb") as f:
-            f.write(img_bytes)
+def get_paragraph_content(paragraph, parent_part, images_buffer):
+    """Safely extracts content from paragraph, handling XML for links."""
+    if not hasattr(paragraph, 'element'):
+        # Fallback for weird objects that python-docx occasionally yields
+        return html_escape(getattr(paragraph, 'text', ""))
+
+    content_parts = []
+    try:
+        for child in paragraph.element.iterchildren():
+            # Standard Text Run
+            if child.tag == qn('w:r'):
+                run = Run(child, paragraph)
+                content_parts.append(convert_run_to_html(run, parent_part, images_buffer))
+            
+            # Hyperlink
+            elif child.tag == qn('w:hyperlink'):
+                rid = child.get(qn('r:id'))
+                url = "#"
+                if rid and rid in parent_part.rels:
+                    try:
+                        url = parent_part.rels[rid].target_ref
+                    except: pass
+                
+                link_text = ""
+                for sub_child in child.iterchildren():
+                    if sub_child.tag == qn('w:r'):
+                        sub_run = Run(sub_child, paragraph)
+                        link_text += convert_run_to_html(sub_run, parent_part, images_buffer)
+                
+                if link_text:
+                    content_parts.append(f'<a href="{url}">{link_text}</a>')
+                    
+    except Exception as e:
+        logging.error(f"Error in paragraph XML parsing: {e}")
+        return html_escape(paragraph.text)
+
+    return "".join(content_parts)
+
+def process_block_to_html(block, parent_part, images_buffer):
+    """Routes docx blocks to HTML converters."""
+    if block is None: return ""
+
+    if isinstance(block, Paragraph):
+        content = get_paragraph_content(block, parent_part, images_buffer)
         try:
-            im = Image.open(fpath)
-            if im.width > 1600 or im.height > 1600:
-                im.thumbnail((1600, 1600))
-                im.save(fpath)
-        except Exception:
-            pass
-        return fname
+            style = block.style.name.lower()
+        except: style = "normal"
+        
+        if not content.strip() and not images_buffer: return ""
 
-    # Extract all blocks
-    blocks = []
-    paragraphs = list(doc.paragraphs)
-    paragraph_index = 0
+        if 'heading 1' in style: return f"<h1>{content}</h1>"
+        elif 'heading 2' in style: return f"<h2>{content}</h2>"
+        elif 'list' in style: return f"<li>{content}</li>"
+        else: return f"<p>{content}</p>"
 
-    for child in doc.element.body:
-        tag = child.tag
-        if tag.endswith("}p"):
-            para = paragraphs[paragraph_index]
-            paragraph_index += 1
-            run_list = []
-            para_hyperlink = None
-            para_hyperlink_text = None
+    elif isinstance(block, Table):
+        html = '<table border="1" style="border-collapse: collapse; width: 100%; margin: 10px 0;">'
+        try:
+            for row in block.rows:
+                html += "<tr>"
+                for cell in row.cells:
+                    cell_html = "".join([get_paragraph_content(p, parent_part, images_buffer) for p in cell.paragraphs])
+                    html += f"<td style='padding:5px; border:1px solid #ccc;'>{cell_html}</td>"
+                html += "</tr>"
+            html += "</table>"
+            return html
+        except Exception as e:
+            logging.error(f"Table conversion error: {e}")
+            return "<p><i>[Table omitted due to error]</i></p>"
+    return ""
 
-            # Detect hyperlinks
-            for rel in para._element.xpath(".//w:hyperlink"):
-                rId = rel.get("{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id")
-                try:
-                    if rId and rId in para.part.rels:
-                        url = para.part.rels[rId].target_ref
-                        para_hyperlink = url
-                        runs = rel.xpath(".//w:r")
-                        para_hyperlink_text = "".join([r.xpath("string(.)") for r in runs])
-                        break
-                except Exception:
-                    continue
+def iter_block_items(parent):
+    """Yields each paragraph and table in document order."""
+    parent_elm = parent.element.body if isinstance(parent, _Document) else parent
+    for child in parent_elm.iterchildren():
+        if child.tag == qn('w:p'): yield Paragraph(child, parent)
+        elif child.tag == qn('w:tbl'): yield Table(child, parent)
 
-            for run in para.runs:
-                # ✅ Fully compatible image extraction (iter approach)
-                for blip in run._element.iter("{http://schemas.openxmlformats.org/drawingml/2006/main}blip"):
-                    rId = blip.get("{http://schemas.openxmlformats.org/officeDocument/2006/relationships}embed")
-                    if rId:
-                        try:
-                            rel = para.part.rels[rId]
-                            img_bytes = rel.target_part.blob
-                            ext = getattr(rel.target_part, "content_type", "").split("/")[-1] or "png"
-                            fname = save_image_bytes(img_bytes, ext)
-                            blocks.append({"type": "image", "file": fname})
-                        except Exception:
-                            continue
+# --- Core Processing ---
 
-                font = run.font
-                color = None
-                try:
-                    if font and font.color and getattr(font.color, "rgb", None):
-                        color = f"#{str(font.color.rgb)}"
-                except Exception:
-                    color = None
-                run_list.append({
-                    "text": run.text,
-                    "bold": bool(run.bold),
-                    "italic": bool(run.italic),
-                    "underline": bool(run.underline),
-                    "color": color,
-                    "hyperlink": None,
-                })
+def chapter_worker(chapter_data):
+    """Worker function for threading."""
+    try:
+        html_parts = []
+        images = []
+        for block in chapter_data['blocks']:
+            html_parts.append(process_block_to_html(block, chapter_data['part'], images))
+        
+        return {
+            "title": chapter_data['title'],
+            "html": "\n".join(html_parts),
+            "images": images
+        }
+    except Exception as e:
+        logging.error(f"Worker failed on chapter {chapter_data['title']}: {e}")
+        return None
 
-            blocks.append({
-                "type": "paragraph",
-                "style": para.style.name if para.style else "",
-                "runs": run_list,
-                "hyperlink": para_hyperlink,
-                "hyperlink_text": para_hyperlink_text,
-            })
+def convert(docx_path, epub_path, cover_path=None):
+    if not os.path.exists(docx_path):
+        print(f"Error: {docx_path} not found."); return
 
-        elif tag.endswith("}tbl"):
-            table_obj = None
-            for t in doc.tables:
-                if t._element == child:
-                    table_obj = t
-                    break
-            if table_obj is not None:
-                html = "<table border='1' style='border-collapse:collapse;width:100%;'>"
-                for row in table_obj.rows:
-                    html += "<tr>"
-                    for cell in row.cells:
-                        cell_text = " ".join(r.text for p in cell.paragraphs for r in p.runs).strip()
-                        html += f"<td style='padding:6px;vertical-align:top'>{cell_text}</td>"
-                    html += "</tr>"
-                html += "</table>"
-                blocks.append({"type": "table", "html": html})
+    doc = docx.Document(docx_path)
+    title = doc.core_properties.title or "Untitled Book"
+    author = doc.core_properties.author or "Unknown Author"
 
-    # Split into chapters by Heading 1
-    chapter_chunks = []
-    current_title = "Introduction"
-    current_chunk_blocks = []
-    for b in blocks:
-        if b["type"] == "paragraph" and b.get("style", "").startswith("Heading 1"):
-            chapter_chunks.append((len(chapter_chunks), current_title, current_chunk_blocks))
-            current_title = "".join([r.get("text", "") for r in b.get("runs", [])]) or "Chapter"
-            current_chunk_blocks = []
+    # Split into chapters
+    chapters_raw = []
+    current_blocks = []
+    current_title = "Front Matter"
+    
+    print("Indexing document...")
+    all_blocks = list(iter_block_items(doc))
+    for block in tqdm(all_blocks, desc="Splitting Chapters"):
+        if isinstance(block, Paragraph) and "heading 1" in block.style.name.lower():
+            if current_blocks:
+                chapters_raw.append({'title': current_title, 'blocks': current_blocks, 'part': doc.part})
+            current_title = block.text.strip()
+            current_blocks = []
         else:
-            current_chunk_blocks.append(b)
-    chapter_chunks.append((len(chapter_chunks), current_title, current_chunk_blocks))
+            current_blocks.append(block)
+    if current_blocks:
+        chapters_raw.append({'title': current_title, 'blocks': current_blocks, 'part': doc.part})
 
-    # Parallel conversion with progress
-    worker_args = [(ci, title, deepcopy(blocks_list), temp_dir) for (ci, title, blocks_list) in chapter_chunks]
+    # Parallel Processing
     results = []
-    print(f"⚙️ Processing {len(worker_args)} chapters using {max_workers or os.cpu_count()} workers...\n")
-    with ProcessPoolExecutor(max_workers=max_workers) as exe, tqdm(total=len(worker_args), desc="Converting chapters", unit="chapter") as pbar:
-        future_to_idx = {exe.submit(process_chunk_serializable, arg): arg[0] for arg in worker_args}
-        for fut in as_completed(future_to_idx):
-            results.append(fut.result())
-            pbar.update(1)
-
-    results.sort(key=lambda x: x[0])
+    print(f"Converting {len(chapters_raw)} chapters...")
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        futures = {executor.submit(chapter_worker, c): i for i, c in enumerate(chapters_raw)}
+        for f in tqdm(as_completed(futures), total=len(chapters_raw), desc="HTML Generation"):
+            res = f.result()
+            if res: results.append((futures[f], res))
+    
+    results.sort(key=lambda x: x[0]) # Maintain order
 
     # Build EPUB
-    print("\n📘 Building EPUB...")
     book = epub.EpubBook()
-    book.set_identifier(uuid.uuid4().hex)
     book.set_title(title)
-    book.set_language("en")
     book.add_author(author)
+    book.set_language('en')
+    book.set_identifier(str(uuid.uuid4()))
 
-    # Embed images
-    for fname in tqdm(sorted(os.listdir(temp_dir)), desc="Embedding images", unit="img"):
-        fpath = os.path.join(temp_dir, fname)
-        if not os.path.isfile(fpath):
-            continue
-        with open(fpath, "rb") as f:
-            data = f.read()
-        ext = fname.split(".")[-1].lower()
-        media_type = f"image/{ext if ext != 'jpg' else 'jpeg'}"
-        img_item = epub.EpubImage()
-        img_item.file_name = f"images/{fname}"
-        img_item.media_type = media_type
-        img_item.content = data
-        book.add_item(img_item)
+    if cover_path and os.path.exists(cover_path):
+        with open(cover_path, 'rb') as f:
+            book.set_cover(os.path.basename(cover_path), f.read())
 
-    # Add chapters
-    epub_chapters = []
-    for idx, title_txt, html in tqdm(results, desc="Adding chapters", unit="chapter"):
-        file_name = f"chap_{idx+1}.xhtml"
-        ch = epub.EpubHtml(title=title_txt, file_name=file_name, lang="en")
-        ch.content = f"<h1>{title_txt}</h1>{html}"
-        book.add_item(ch)
-        epub_chapters.append(ch)
+    style = 'body { font-family: serif; } h1 { text-align: center; } a { color: #0000EE; }'
+    css = epub.EpubItem(uid="style", file_name="style/main.css", media_type="text/css", content=style)
+    book.add_item(css)
 
-    book.toc = tuple(epub_chapters)
-    book.spine = ["nav"] + epub_chapters
+    epub_chaps = []
+    seen_imgs = set()
+    for i, (_, data) in enumerate(results):
+        for img_name, img_bytes, img_mime in data['images']:
+            if img_name not in seen_imgs:
+                item = epub.EpubItem(uid=img_name, file_name=f"images/{img_name}", media_type=img_mime, content=img_bytes)
+                book.add_item(item)
+                seen_imgs.add(img_name)
+
+        chapter = epub.EpubHtml(title=data['title'], file_name=f"chap_{i}.xhtml")
+        chapter.content = f"<h1>{data['title']}</h1>" + data['html']
+        chapter.add_item(css)
+        book.add_item(chapter)
+        epub_chaps.append(chapter)
+
+    book.toc = tuple(epub_chaps)
     book.add_item(epub.EpubNcx())
     book.add_item(epub.EpubNav())
+    book.spine = ['nav'] + epub_chaps
 
-    epub.write_epub(epub_path, book)
-    shutil.rmtree(temp_dir, ignore_errors=True)
-    print(f"\n✅ EPUB created: {epub_path}\n📖 Title: {title}\n✍️ Author: {author}")
+    print("Writing EPUB...")
+    epub.write_epub(epub_path, book, {})
+    print(f"Finished! Errors (if any) logged to conversion_errors.log")
 
 
 if __name__ == "__main__":
-    file_root = "C:\\DATA\\Novels\\I Really am an Inside Player"
-    input_file = os.path.join(file_root, "I Really am an Inside Player.docx")
-    output_file = os.path.join(file_root, "output.epub")
-    max_workers = 16
-    docx_to_epub_parallel(input_file, output_file, max_workers)
+    file_root = "C:\\DATA\\Novels\\Daily life of a spy in the world of Conan"
+    input_file = os.path.join(file_root, "input.docx")
+    output_file = os.path.join(file_root, "Daily life of a spy in the world of Conan.epub")
+    cover_file = os.path.join(file_root, "Cover.jpeg")
+
+    # --- Logging Setup ---
+    logging.basicConfig(
+        filename=os.path.join(file_root, "conversion_errors.log"),
+        level=logging.ERROR,
+        format='%(asctime)s - %(levelname)s - %(message)s'
+    )
+
+    if os.path.exists(input_file):
+        convert(input_file, output_file, cover_file if os.path.exists(cover_file) else None)
+    else:
+        print(f"No input file found at {input_file}.")

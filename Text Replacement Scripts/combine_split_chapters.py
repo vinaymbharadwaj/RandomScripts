@@ -68,7 +68,7 @@ def merge_chapters(input_path, output_path, report_path):
 
 if __name__ == "__main__":
     # Update these paths as needed
-    FILE_ROOT = "C:\\DATA\\Novels\\My youthful school days truly began after my rebirth"
+    FILE_ROOT = "C:\\DATA\\Novels\\Pirate - Nami! Give me back my Berry!"
     INPUT_FILE = os.path.join(FILE_ROOT, "input.docx")
     OUTPUT_FILE = os.path.join(FILE_ROOT, "novel_merged.docx")
     REPORT_FILE = os.path.join(FILE_ROOT, "report.txt")

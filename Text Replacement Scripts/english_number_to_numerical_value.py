@@ -262,8 +262,8 @@ def process_docx_file(filepath):
 
 
 if __name__ == "__main__":
-    file_root = "C:\\DATA\\Novels\\The NBA's Splash Brothers"
-    input_file = os.path.join(file_root, "The NBA's Splash Brothers.docx")  # can be input.txt or input.docx
+    file_root = "C:\\DATA\\Novels\\Started with a Sitcom"
+    input_file = os.path.join(file_root, "input.docx")  # can be input.txt or input.docx
     
     if input_file.lower().endswith('.txt'):
         process_txt_file(input_file)

@@ -389,7 +389,7 @@ if __name__ == "__main__":
     # mapping_file = "C:\\DATA\\Novels\\HarryPotter_Glossary_Word_Replacement.txt"
     # mapping_file = "C:\\DATA\\Novels\\OnePiece_Glossary_Word_Replacement.txt"
     
-    file_root = "C:\\DATA\\Novels\\Conan - Science Cartoonist Kudo Yuji"
+    file_root = "C:\\DATA\\Novels\\Daily life of a spy in the world of Conan"
     
     input_file = os.path.join(file_root, "input.docx")  # can be input.txt or input.docx
     output_file = os.path.join(file_root, "output.docx")  # or output.txt
