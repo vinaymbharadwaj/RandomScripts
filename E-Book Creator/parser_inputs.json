@@ -1,22 +1,22 @@
 {
-    "novel_name": "My Daily Life of Writing Novels for Detective Conan and Just Loafing Around Doing Nothing",
+    "novel_name": "The Trainer Only Wants to Tame Dragons",
 
-    "novel_cover_image": "https://chatgpt.com/backend-api/estuary/content?id=file_00000000b210720980478aac75057314&ts=491313&p=fs&cid=1&sig=915ea85a1c341f0a6168ed39e6ef346a03f4e48f1593aabfdb140fc8970f70c1&v=0",
+    "novel_cover_image": "https://bookcover.yuewen.com/qdbimg/349573/1043008070/600",
     "_comment_nci": "JPEG only.",
 
-    "author": "穷尽",
+    "author": "白泽听风",
     "_comment_au": "If left blank, author will be set to 'unknown'.",
     
-    "website_name": "tomatomtl",
+    "website_name": "tongrenquan",
     "_comment_wn1": "readnovelfull | royalroad | scribblehub | boxnovel | readwebnovels | instadoses | novelfun | tongrenquan | 69shubatw",
     "_comment_wn2": "ranobes | tracan | shuhaige |  tomatomtl | dannianwen | biquge | xszj | dxs | novel543 | bixiange | quanben",
 
-    "website_root": "https://tomatomtl.com",
+    "website_root": "https://www.tongrenquan.org",
     "_comment_wr1": "No slash at the end.",
     "_comment_wr2": "For TraCan (BROKEN) - root should contain date - https://tracan294231873.com/2020/01/19.",
     "_comment_wr3": "For dannianwen (BROKEN) - root should contain chapter - https://www.dannianwen.com/book/5370/chapter.",
 
-    "start_chapter_url": "/book/7448397271160327230/7448479052496634430",
+    "start_chapter_url": "/tongren/9634/1.html",
 
     "use_selenium": "true",
     "_comment_us1": "true/false",

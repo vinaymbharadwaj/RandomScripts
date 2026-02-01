@@ -61,7 +61,7 @@ def merge_docx(input_folder, output_filename):
 
 if __name__ == "__main__":
     # CONFIGURATION
-    target_folder = "C:\\DATA\\Novels\\Daily life of a spy in the world of Conan\\output_parts"
+    target_folder = "C:\\DATA\\Novels\\Genshin Impact - Starting from Liyue to Build Infrastructure\\result_files"
     output_name = os.path.join(target_folder, "output.docx")
     
     merge_docx(target_folder, output_name)

@@ -217,7 +217,7 @@ def process_docx(input_path, output_path):
 
 if __name__ == "__main__":
     # Update these paths as needed
-    FILE_ROOT = "C:\\DATA\\Novels\\Yukinoshita's Correction Method"
+    FILE_ROOT = "C:\\DATA\\Novels\\Genshin Impact, My Villain System is a Bit Abnormal"
     INPUT_FILE = os.path.join(FILE_ROOT, "input.docx")
     OUTPUT_FILE = os.path.join(FILE_ROOT, "output.docx")
     MAX_WORKERS = os.cpu_count()  # Uses all available CPU cores
