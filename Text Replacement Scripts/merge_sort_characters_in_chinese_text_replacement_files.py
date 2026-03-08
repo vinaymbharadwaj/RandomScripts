@@ -73,18 +73,25 @@ def merge_with_report(file_list, output_file, report_file):
 
 if __name__ == "__main__":
     FILE_ROOT = "C:\\DATA\\Novels"
-    OUTPUT_FILE = os.path.join(FILE_ROOT, "Combined_Glossary_Word_Replacement_Merged.txt")
+    OUTPUT_FILE = os.path.join(FILE_ROOT, "Pokemon_Glossary_Word_Replacement.txt")
     CONFLICT_REPORT_FILE = os.path.join(FILE_ROOT, "Conflict_Report.txt")
     
     # Your input files (First file has highest priority)
+    # input_files = [
+    #     os.path.join(FILE_ROOT, "Pokemon_Glossary_Word_Replacement.txt"), 
+    #     os.path.join(FILE_ROOT, "Conan_Glossary_Word_Replacement.txt"),
+    #     os.path.join(FILE_ROOT, "GenshinHonkai_Glossary_Word_Replacement.txt"),
+    #     os.path.join(FILE_ROOT, "HarryPotter_Glossary_Word_Replacement.txt"),
+    #     os.path.join(FILE_ROOT, "FairyTail_Glossary_Word_Replacement.txt"),
+    #     os.path.join(FILE_ROOT, "OnePiece_Glossary_Word_Replacement.txt"),
+    #     os.path.join(FILE_ROOT, "General_Glossary_Word_Replacement.txt"),
+    #     os.path.join(FILE_ROOT, "LordOfMysteries_Glossary_Word_Replacement.txt")
+    #     ]
+    
     input_files = [
-        os.path.join(FILE_ROOT, "Pokemon_Glossary_Word_Replacement.txt"), 
-        os.path.join(FILE_ROOT, "Conan_Glossary_Word_Replacement.txt"),
-        os.path.join(FILE_ROOT, "GenshinHonkai_Glossary_Word_Replacement.txt"),
-        os.path.join(FILE_ROOT, "HarryPotter_Glossary_Word_Replacement.txt"),
-        os.path.join(FILE_ROOT, "FairyTail_Glossary_Word_Replacement.txt"),
-        os.path.join(FILE_ROOT, "OnePiece_Glossary_Word_Replacement.txt"),
-        os.path.join(FILE_ROOT, "General_Glossary_Word_Replacement.txt"),
+        os.path.join(FILE_ROOT, "1.txt"), 
+        os.path.join(FILE_ROOT, "2.txt"),
+        os.path.join(FILE_ROOT, "3.txt")
         ]
     
     merge_with_report(input_files, OUTPUT_FILE, CONFLICT_REPORT_FILE)

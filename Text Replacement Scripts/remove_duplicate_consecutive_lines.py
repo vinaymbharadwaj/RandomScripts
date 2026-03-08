@@ -47,4 +47,4 @@ def remove_duplicate_consecutive_lines(filename):
 
 
 # Run the function on the sample file.
-remove_duplicate_consecutive_lines('C:\\DATA\\Novels\\My Name is Kousaka Kyousuke, But I Don\'t Want to Be Pushed Down by My Sister\\input.txt')
+remove_duplicate_consecutive_lines('C:\\DATA\\Novels\\I caught Pokémon\\input.txt')

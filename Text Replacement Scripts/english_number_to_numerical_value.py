@@ -262,7 +262,7 @@ def process_docx_file(filepath):
 
 
 if __name__ == "__main__":
-    file_root = "C:\\DATA\\Novels\\My Pokemon Trainer Simulator"
+    file_root = "C:\\DATA\\Novels\\Pokémon - King of Poisons"
     input_file = os.path.join(file_root, "input.docx")  # can be input.txt or input.docx
     
     if input_file.lower().endswith('.txt'):

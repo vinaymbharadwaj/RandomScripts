@@ -384,16 +384,19 @@ def process_docx(input_path: str, output_path: str, pattern_str: str, mapping: D
 if __name__ == "__main__":
     # File with Chinese=English lines
     # mapping_file = "C:\\DATA\\Novels\\Pokemon_Glossary_Word_Replacement.txt"
-    mapping_file = "C:\\DATA\\Novels\\Conan_Glossary_Word_Replacement.txt"
+    mapping_file = "C:\\DATA\\Novels\\Pokemon_More_Glossary_Word_Replacement.txt"
+    # mapping_file = "C:\\DATA\\Novels\\Conan_Glossary_Word_Replacement.txt"
     # mapping_file = "C:\\DATA\\Novels\\HarryPotter_Glossary_Word_Replacement.txt"
     # mapping_file = "C:\\DATA\\Novels\\OnePiece_Glossary_Word_Replacement.txt"
     # mapping_file = "C:\\DATA\\Novels\\GenshinHonkai_Glossary_Word_Replacement.txt"
     # mapping_file = "C:\\DATA\\Novels\\FairyTail_Glossary_Word_Replacement.txt"
+    # mapping_file = "C:\\DATA\\Novels\\LordOfMysteries_Glossary_Word_Replacement.txt"
+    # mapping_file = "C:\\DATA\\Novels\\General_Glossary_Word_Replacement.txt"
     
-    file_root = "C:\\DATA\\Novels\\Isn't it very scientific to kill people with the Death Note"
+    file_root = "C:\\DATA\\Novels\\Pokemon - I was forced to become the Sandstorm King"
     
-    input_file = os.path.join(file_root, "input.txt")  # can be input.txt or input.docx
-    output_file = os.path.join(file_root, "output.txt")  # .txt or .docx
+    input_file = os.path.join(file_root, "input.docx")  # can be input.txt or input.docx
+    output_file = os.path.join(file_root, "output.docx")  # .txt or .docx
     fast_serialize = True
     workers = max(1, cpu_count()-1)
 
