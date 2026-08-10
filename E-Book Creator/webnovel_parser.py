@@ -6,7 +6,6 @@ import requests
 import json
 from PIL import Image, ImageDraw, ImageFont
 import textwrap
-import cfscrape
 import cloudscraper
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -95,6 +94,11 @@ class ChapterTitle(object):
         if not chapterTitle:
             chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
         return chapterTitle
+    def parse_trxscc(self):
+        chapterTitle = self.soup.select_one('h1').text
+        if not chapterTitle:
+            chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
+        return chapterTitle
     def parse_novel543(self):
         chapterTitle = self.soup.title.string
         if not chapterTitle:
@@ -112,6 +116,21 @@ class ChapterTitle(object):
         return chapterTitle
     def parse_69shubatw(self):
         chapterTitle = self.soup.select_one('h1[class="nr_title"]').text
+        if not chapterTitle:
+            chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
+        return chapterTitle
+    def parse_uureadtw(self):
+        chapterTitle = self.soup.select_one('h1[class="chatit text-center"]').text
+        if not chapterTitle:
+            chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
+        return chapterTitle
+    def parse_rousefang(self):
+        chapterTitle = self.soup.select_one('h1[class="readTitle"]').text
+        if not chapterTitle:
+            chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
+        return chapterTitle
+    def parse_xiaoshuo(self):
+        chapterTitle = self.soup.select_one('h1[class="readTitle"]').text
         if not chapterTitle:
             chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
         return chapterTitle
@@ -230,10 +249,24 @@ class ChapterContent(object):
         add_title = "<h1>"+self.chapterTitle+"</h1>"
         chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
         return chapter_content
-    def parse_novel543(self):
-        div = self.soup.select_one('div[class="content py-5"]')
+    def parse_trxscc(self):
+        div = self.soup.select_one('div[class="read_chapterDetail"]')
         for a in div.select("a"):
             a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
+        chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
+        return chapter_content
+    def parse_novel543(self):
+        div = self.soup.select_one('div[class="content py-5"]')
+        for tag in div.select("""
+            a,
+            script,
+            div.adBlock,
+            div.gadBlock,
+            p:has(span[style*="color: rgb(255, 102, 102)"]),
+            p:has(span[style*="color:#ff6666"])
+        """):
+            tag.decompose()
         add_title = "<h1>"+self.chapterTitle+"</h1>"
         chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
         return chapter_content
@@ -255,6 +288,32 @@ class ChapterContent(object):
         div = self.soup.select_one('div[id="nr1"]')
         for a in div.select("a"):
             a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
+        chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
+        return chapter_content
+    def parse_uureadtw(self):
+        div = self.soup.select_one('div[class="txt_tcontent"]')
+        for a in div.select("a"):
+            a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
+        chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
+        return chapter_content
+    def parse_rousefang(self):
+        div = self.soup.select_one('div[id="htmlContent"]')
+        for a in div.select("a"):
+            a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
+        chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
+        return chapter_content
+    def parse_xiaoshuo(self):
+        div = self.soup.select_one('div[id="htmlContent"]')
+        for tag in div.select("""
+            a,
+            script,
+            div.adBlock,
+            div.gadBlock
+        """):
+            tag.decompose()
         add_title = "<h1>"+self.chapterTitle+"</h1>"
         chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
         return chapter_content
@@ -368,7 +427,7 @@ class NextChapterLink(object):
                 page_url = self.website_url + str(anchor.get('href'))
         return page_url
     def parse_xszj(self):
-        #time.sleep(1)
+        time.sleep(1)
         page_url = "invalid"
         anchor_next = self.soup.select('a[rel="next"]')
         if(not anchor_next):
@@ -387,6 +446,24 @@ class NextChapterLink(object):
         print("Page URL: "+str(page_url))
         return page_url
     def parse_tongrenquan(self):
+        page_url = "invalid"
+        #div = self.soup.select_one('div[class="pageNav"]')
+        anchor_all = self.soup.select('a') #div.select('a')
+        for anchor in anchor_all:
+            to_translate = str(anchor.text)
+            translated_text = GoogleTranslator(source='zh-CN', target='en').translate(to_translate)
+            if "next" in str(translated_text).lower():
+                if anchor.get('href'):
+                    page_url = self.website_url + str(anchor.get('href'))
+                    break
+        if page_url=="invalid":
+            chapter_link_root = self.current_page_url.rsplit("/",1)[0]
+            chapter_link_number = int(str(self.current_page_url.rsplit("/",1)[-1]).rsplit(".",1)[0]) + 1
+            page_url = chapter_link_root + "/" + str(chapter_link_number) + ".html"
+        if page_url==self.current_page_url:
+            return"invalid"
+        return page_url
+    def parse_trxscc(self):
         page_url = "invalid"
         #div = self.soup.select_one('div[class="pageNav"]')
         anchor_all = self.soup.select('a') #div.select('a')
@@ -446,11 +523,40 @@ class NextChapterLink(object):
             page_url = self.website_url + str(anchor_next.get('href'))
         return page_url
     def parse_69shubatw(self):
+        time.sleep(1)
         page_url = "invalid"
         anchor = self.soup.select_one('a[id="pb_next"]')
         if anchor and anchor.get('href'):
             if "read" in str(anchor.get('href')):
                 page_url = self.website_url + str(anchor.get('href'))
+        return page_url
+    def parse_uureadtw(self):
+        page_url = "invalid"
+        div = self.soup.select_one('div[class="operate text-center"]')
+        anchor_all = div.select('a')
+        #anchor_all = self.soup.select('a')
+        for anchor in anchor_all:
+            to_translate = str(anchor.text)
+            translated_text = GoogleTranslator(source='zh-CN', target='en').translate(to_translate)
+            if "next" in str(translated_text).lower():
+                if anchor.get('href'):
+                    page_url = self.website_url + str(anchor.get('href'))
+                    break
+        return page_url
+    def parse_rousefang(self):
+        page_url = "invalid"
+        anchor = self.soup.select_one('a[id="linkNext"]')
+        if anchor and anchor.get('href'):
+            if "read" in str(anchor.get('href')):
+                page_url = self.website_url + "/" + str(anchor.get('href'))
+        return page_url
+    def parse_xiaoshuo(self):
+        #time.sleep(1)
+        page_url = "invalid"
+        anchor = self.soup.select_one('a[id="linkNext"]')
+        if anchor and anchor.get('href'):
+            if "xiaoshuo" not in str(anchor.get('href')):
+                page_url = self.website_url + "/" + str(anchor.get('href'))
         return page_url
     
 
@@ -509,7 +615,6 @@ class EbookCreator(object):
     def start_parsing(self):
 
         # Get the text at the set URL
-        #scraper = cfscrape.create_scraper()
         scraper = cloudscraper.create_scraper()
 
         # Create the epub file
@@ -604,7 +709,7 @@ class EbookCreator(object):
                     tag_name = "ID"
                     id_name = "chaptercontent"
                     full_wait = False
-                elif(website_name == "tongrenquan"):
+                elif(website_name == "tongrenquan" or website_name == "trxscc"):
                     tag_name = "CLASS"
                     id_name = "read_chapterDetail"
                     full_wait = True

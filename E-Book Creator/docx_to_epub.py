@@ -235,10 +235,10 @@ def convert(docx_path, epub_path, cover_path=None):
 
 
 if __name__ == "__main__":
-    file_root = "C:\\DATA\\Novels\\Genshin Impact - Starting from Liyue to Build Infrastructure"
-    input_file = os.path.join(file_root, "Genshin Impact - Starting from Liyue to Build Infrastructure (TRXS).docx")
-    output_file = os.path.join(file_root, "Genshin Impact - Starting from Liyue to Build Infrastructure (TRXS).epub")
-    cover_file = os.path.join(file_root, "Cover 2.jpeg")
+    file_root = "C:\\DATA\\Novels\\Analyzing The Ninja World Starting From Konoha"
+    input_file = os.path.join(file_root, "Analyzing The Ninja World Starting From Konoha (1-291).docx")
+    output_file = os.path.join(file_root, "Analyzing The Ninja World Starting From Konoha (1-291).epub")
+    cover_file = os.path.join(file_root, "Cover 2.png")  # Optional cover image
 
     # --- Logging Setup ---
     logging.basicConfig(

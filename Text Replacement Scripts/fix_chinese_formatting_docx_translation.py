@@ -17,8 +17,8 @@ def fix_chinese_formatting_worker(file_info):
         new_doc = Document()
         
         paragraph_buffer = ""
-        # Punctuation that marks the end of a sentence
-        terminal_punctuation = tuple(['。', '！', '？', '…', '”', '.', '!', '?', '"'])
+        # These are considered "terminal punctuation" for Chinese and English, which indicate the end of a sentence.
+        terminal_punctuation = tuple(['。', '！', '？', '…', '”', '.', '!', '?', '"', ')', ']', '）', '】'])
 
         for para in doc.paragraphs:
             text = para.text.strip()
@@ -103,7 +103,7 @@ def process_folder_parallel(input_folder, output_folder):
 # --- Usage ---
 if __name__ == "__main__":
     # You can change these folder names to whatever you like
-    file_root = "C:\\DATA\\Novels\\My older sister is a voice actor and my younger sister is a pornographic cartoonist!"
+    file_root = "C:\\DATA\\Novels\\Analyzing The Ninja World Starting From Konoha"
     
     target_input_folder = os.path.join(file_root, "")
     target_output_folder = os.path.join(file_root, "")

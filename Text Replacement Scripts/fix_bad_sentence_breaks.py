@@ -131,7 +131,7 @@ def reformat_novel_docx(input_path, output_path, sentences_per_paragraph=4):
 def main():
     # --- SETUP FILE PATHS ---
     # --- ENTER YOUR FILE PATH HERE ---
-    FILE_ROOT = "C:\\DATA\\Novels\\Eat Reba's soft rice, spend all her small treasury at the beginning"
+    FILE_ROOT = "C:\\DATA\\Novels\\Lord of Mysteries - Starting As A Reader"
     FILE_NAME = os.path.join(FILE_ROOT, "input.docx")
     input_file = Path(FILE_NAME)
     

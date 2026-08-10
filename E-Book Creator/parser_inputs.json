@@ -1,26 +1,30 @@
 {
-    "novel_name": "The Trainer Only Wants to Tame Dragons",
+    "novel_name": "Lord of the Mysteries - Silver Key (C1-C796)",
 
-    "novel_cover_image": "https://bookcover.yuewen.com/qdbimg/349573/1043008070/600",
-    "_comment_nci": "JPEG only.",
+    "novel_cover_image": "https://bookcover.yuewen.com/qdbimg/349573/1044650312/600",
+    "_comment_nci1": "JPEG only.",
+    "_comment_nci2": "For fanqie, use this: https://p3-novel.byteimg.com/origin/novel-pic/c39f56b6f9350ef08ea1f7cba81274c4",
 
-    "author": "白泽听风",
+    "author": "想不到笔名了",
     "_comment_au": "If left blank, author will be set to 'unknown'.",
     
-    "website_name": "tongrenquan",
-    "_comment_wn1": "readnovelfull | royalroad | scribblehub | boxnovel | readwebnovels | instadoses | novelfun | tongrenquan | 69shubatw",
-    "_comment_wn2": "ranobes | tracan | shuhaige |  tomatomtl | dannianwen | biquge | xszj | dxs | novel543 | bixiange | quanben",
+    "website_name": "xszj",
+    "_comment_wn1": "readnovelfull | royalroad | scribblehub | boxnovel | readwebnovels | instadoses | xiaoshuo",
+    "_comment_wn2": "ranobes | tracan | shuhaige | tomatomtl | dannianwen | biquge | xszj | dxs | quanben",
+    "_comment_wn3": "novelfun | tongrenquan | trxscc | 69shubatw | novel543 | bixiange | uureadtw | rousefang",
 
-    "website_root": "https://www.tongrenquan.org",
+    "website_root": "https://xszj.org",
     "_comment_wr1": "No slash at the end.",
     "_comment_wr2": "For TraCan (BROKEN) - root should contain date - https://tracan294231873.com/2020/01/19.",
     "_comment_wr3": "For dannianwen (BROKEN) - root should contain chapter - https://www.dannianwen.com/book/5370/chapter.",
+    "_comment_wr4": "For rousefang (BROKEN) - root should contain book ID - https://www.rousefang.com/book/224567",
+    "_comment_wr5": "For xiaoshuo - root should contain book ID - https://www.xiaoshuo.com/book/224567",
 
-    "start_chapter_url": "/tongren/9634/1.html",
+    "start_chapter_url": "/b/477696/c/28741552",
 
-    "use_selenium": "true",
+    "use_selenium": "false",
     "_comment_us1": "true/false",
-    "_comment_us2": "Keep 'true' ONLY for 'tomatomtl', 'biquge' and 'tongrenquan'",
+    "_comment_us2": "Keep 'true' ONLY for 'tomatomtl', 'biquge', 'bixiange' and 'tongrenquan'",
     "browser": "firefox",
     "_comment_us3": "'chrome' (default) or 'firefox'. Use firefox for tomatomtl.",
     
