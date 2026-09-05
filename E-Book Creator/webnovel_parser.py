@@ -1,5 +1,7 @@
 #!/usr/bin/python
-# coding: latin-1
+# -*- coding: utf-8 -*-
+import unicodedata
+
 from bs4 import BeautifulSoup
 from ebooklib import epub
 import requests
@@ -131,6 +133,21 @@ class ChapterTitle(object):
         return chapterTitle
     def parse_xiaoshuo(self):
         chapterTitle = self.soup.select_one('h1[class="readTitle"]').text
+        if not chapterTitle:
+            chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
+        return chapterTitle
+    def parse_boluomao1(self):
+        chapterTitle = self.soup.select_one('h1[class="title font30"]').text
+        if not chapterTitle:
+            chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
+        return chapterTitle
+    def parse_qishen123(self):
+        chapterTitle = self.soup.select_one('h1[class="title"]').text
+        if not chapterTitle:
+            chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
+        return chapterTitle
+    def parse_mopbook(self):
+        chapterTitle = self.soup.select_one('h1').text
         if not chapterTitle:
             chapterTitle = self.soup.title.string if self.soup.title.string else "invalid"        
         return chapterTitle
@@ -317,6 +334,27 @@ class ChapterContent(object):
         add_title = "<h1>"+self.chapterTitle+"</h1>"
         chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
         return chapter_content
+    def parse_boluomao1(self):
+        div = self.soup.select_one('div[class="content font18"]')
+        for a in div.select("a"):
+            a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
+        chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
+        return chapter_content
+    def parse_qishen123(self):
+        div = self.soup.select_one('div[class="content"]')
+        for a in div.select("a"):
+            a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
+        chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
+        return chapter_content
+    def parse_mopbook(self):
+        div = self.soup.select_one('div[class="content font18"]')
+        for a in div.select("a"):
+            a.decompose()
+        add_title = "<h1>"+self.chapterTitle+"</h1>"
+        chapter_content = add_title.encode('utf-8')+div.encode('utf-8')
+        return chapter_content
 
 class NextChapterLink(object):
     def parse(self,sitename,soup_obj,website_url,current_page_url):
@@ -482,19 +520,22 @@ class NextChapterLink(object):
             return"invalid"
         return page_url
     def parse_novel543(self):
+        time.sleep(1)
         page_url = "invalid"
         div = self.soup.select_one('div[class="warp my-5 foot-nav"]')
         anchor_all = div.select('a')
-        #anchor_all = self.soup.select('a')
         for anchor in anchor_all:
-            to_translate = str(anchor.text)
-            translated_text = GoogleTranslator(source='zh-CN', target='en').translate(to_translate)
-            if "next" in str(translated_text).lower():
-                if anchor.get('href'):
-                    page_url = self.website_url + str(anchor.get('href'))
+            to_translate = unicodedata.normalize(
+                "NFKC",
+                anchor.get_text(strip=True)
+            )
+            if to_translate == "下一章":
+                if anchor.get("href"):
+                    page_url = self.website_url + str(anchor.get("href"))
                     break
         return page_url
     def parse_bixiange(self):
+        time.sleep(1)
         page_url = "invalid"
         div = self.soup.select_one('div[class="mPage"]')
         anchor_all = div.select('a')
@@ -557,6 +598,47 @@ class NextChapterLink(object):
         if anchor and anchor.get('href'):
             if "xiaoshuo" not in str(anchor.get('href')):
                 page_url = self.website_url + "/" + str(anchor.get('href'))
+        return page_url
+    def parse_boluomao1(self):
+        time.sleep(1)
+        page_url = "invalid"
+        anchor_all = self.soup.select('a[class="btnGreen"]')
+        for anchor in anchor_all:
+            to_translate = unicodedata.normalize(
+                "NFKC",
+                anchor.get_text(strip=True)
+            )
+            if any(text in to_translate for text in ("下一章", "下一页", "下一頁")):
+                if anchor.get("href"):
+                    page_url = self.website_url + str(anchor.get("href"))
+                    print("Next Chapter URL: "+str(page_url))
+                    break
+        return page_url
+    def parse_qishen123(self):
+        time.sleep(1)
+        page_url = "invalid"
+        anchor = self.soup.select_one('a[id="next_url"]')
+        if anchor and anchor.get('href'):
+            if ".html" in str(anchor.get('href')):
+                page_url = self.website_url + str(anchor.get('href'))
+                print("Next Chapter URL: "+str(page_url))
+        return page_url
+    def parse_mopbook(self):
+        time.sleep(1)
+        page_url = "invalid"
+        div = self.soup.select_one('div[class="btnW font14"]')
+        anchor_all = self.soup.select('a')
+        for anchor in anchor_all:
+            print("Next Chapter URL: "+str(anchor.get_text(strip=True)))
+            to_translate = unicodedata.normalize(
+                "NFKC",
+                anchor.get_text(strip=True)
+            )
+            if any(text in to_translate for text in ("下一章", "下一页", "下一頁")):
+                if anchor.get("href"):
+                    page_url = self.website_url + str(anchor.get("href"))
+                    print("Next Chapter URL: "+str(page_url))
+                    break
         return page_url
     
 
@@ -678,7 +760,7 @@ class EbookCreator(object):
         if(use_selenium == "true"):
             if(browser_choice == "firefox"):
                 # Path to your EXISTING Firefox profile (already logged in)
-                firefox_profile_path = "C:\\Users\\vinay\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\spdu5de0.default-release"
+                firefox_profile_path = "C:\\Users\\vinay\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\wrlg4den.default-release"
                 options = FirefoxOptions()
                 # Load existing logged-in Firefox profile
                 options.add_argument("-profile")
@@ -714,6 +796,14 @@ class EbookCreator(object):
                     id_name = "read_chapterDetail"
                     full_wait = True
                 elif(website_name == "bixiange"):
+                    tag_name = "CLASS"
+                    id_name = "content"
+                    full_wait = True
+                elif(website_name == "boluomao1"):
+                    tag_name = "CLASS"
+                    id_name = "obf-text"
+                    full_wait = True
+                elif(website_name == "mopbook"):
                     tag_name = "CLASS"
                     id_name = "content"
                     full_wait = True

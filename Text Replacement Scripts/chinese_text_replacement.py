@@ -390,11 +390,11 @@ if __name__ == "__main__":
     # mapping_file = "C:\\DATA\\Novels\\OnePiece_Glossary_Word_Replacement.txt"
     # mapping_file = "C:\\DATA\\Novels\\GenshinHonkai_Glossary_Word_Replacement.txt"
     # mapping_file = "C:\\DATA\\Novels\\FairyTail_Glossary_Word_Replacement.txt"
-    mapping_file = "C:\\DATA\\Novels\\Naruto_Glossary_Word_Replacement.txt"
+    # mapping_file = "C:\\DATA\\Novels\\Naruto_Glossary_Word_Replacement.txt"
     # mapping_file = "C:\\DATA\\Novels\\LordOfMysteries_Glossary_Word_Replacement.txt"
-    # mapping_file = "C:\\DATA\\Novels\\General_Glossary_Word_Replacement.txt"
+    mapping_file = "C:\\DATA\\Novels\\General_Glossary_Word_Replacement.txt"
     
-    file_root = "C:\\DATA\\Novels\\Analyzing The Ninja World Starting From Konoha"
+    file_root = "C:\\DATA\\Novels\\The lonely Hikigaya Hachiman wants to become the king of mystery novels"
     
     input_file = os.path.join(file_root, "input.txt")  # can be input.txt or input.docx
     output_file = os.path.join(file_root, "output.txt")  # .txt or .docx

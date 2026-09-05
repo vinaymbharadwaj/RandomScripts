@@ -61,7 +61,7 @@ def merge_docx(input_folder, output_filename):
 
 if __name__ == "__main__":
     # CONFIGURATION
-    target_folder = "C:\\DATA\\Novels\\Lord of the Mysteries - Silver Key"
+    target_folder = "C:\\DATA\\Novels\\In Conan, The System Said I'm Batman\\output_parts"
     output_name = os.path.join(target_folder, "output.docx")
     
     merge_docx(target_folder, output_name)

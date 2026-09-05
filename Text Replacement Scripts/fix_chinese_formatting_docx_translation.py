@@ -103,7 +103,7 @@ def process_folder_parallel(input_folder, output_folder):
 # --- Usage ---
 if __name__ == "__main__":
     # You can change these folder names to whatever you like
-    file_root = "C:\\DATA\\Novels\\Analyzing The Ninja World Starting From Konoha"
+    file_root = "C:\\DATA\\Novels\\The lonely Hikigaya Hachiman wants to become the king of mystery novels"
     
     target_input_folder = os.path.join(file_root, "")
     target_output_folder = os.path.join(file_root, "")
